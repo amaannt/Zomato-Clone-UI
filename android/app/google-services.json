@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176871416031",
+    "project_id": "palibabarestaurant",
+    "storage_bucket": "palibabarestaurant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176871416031:android:b77c8f5e72d48cba62c96a",
+        "android_client_info": {
+          "package_name": "com.palibaba.foodapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176871416031-v7lc8c4getln9ngrp6vcrs4r7ikdlhnp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM65qSbE-bFpse9HD6ukYgwu7IceBmaOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176871416031-v7lc8c4getln9ngrp6vcrs4r7ikdlhnp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -9,6 +9,7 @@ import 'package:zomatoui/ui/dinein/second.dart';
 import 'package:zomatoui/ui/gold/third.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
+import 'package:backendless_sdk/backendless_sdk.dart';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -17,8 +18,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    FirstPage(),
-    SecondPage(),
+    OfferPage(),
+    MenuPage(),
     ThirdPage(),
     FourthPage(),
     FifthPage(),
@@ -30,12 +31,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+
   @override
   void initState() {
     super.initState();
 
-  }
+    // uncomment the line below if your application is hosted in the European hosting zone of Backendless:
+    Backendless.setUrl("https://eu-api.backendless.com");
 
+    Backendless.initApp(
+        "4CCACF64-55A7-6B67-FFC3-44558A179500",
+        "BB87A32F-17D7-4C50-A9E8-4D5AFA66D881",
+        "154EC8F4-6B07-43BD-BE2A-9E0C59DEDB18");
+
+  }
   @override
   void dispose() {
     super.dispose();
@@ -47,21 +56,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.whiteColor,
         items:  <BottomNavigationBarItem>[
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.stars_rounded),
+            title: Text('Offers'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(MaterialCommunityIcons.food_fork_drink),
+            title: Text('Menu'),
+          ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesome.shopping_bag),
-            title: Text('Order'),
+            title: Text('Orders'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(MaterialCommunityIcons.shoe_print),
-            title: Text('Go Out'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            title: Text('Gold'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(SimpleLineIcons.compass),
-            title: Text('Explore'),
+            icon: Icon(SimpleLineIcons.exclamation,color: Colors.pink,),
+            title: Text(
+                'DELETE \n    Tab',
+                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.red),
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -77,7 +90,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         onTap: _onItemTapped,
       ),
       body: SafeArea(
-        child: _selectedIndex==2||_selectedIndex==4?Container(child:_widgetOptions.elementAt(_selectedIndex),) :Container(
+        child: _selectedIndex!=1?Container(child:_widgetOptions.elementAt(_selectedIndex),) :Container(
           color: AppColors.whiteColor,
           padding: EdgeInsets.all(10),
           child: Column(
@@ -134,7 +147,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              SearchBar('Search for restaurants, Cusines...'),
+              SearchBar('Search for Item'),
               _widgetOptions.elementAt(_selectedIndex),
 
             ],
