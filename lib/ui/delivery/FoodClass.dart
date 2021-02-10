@@ -11,7 +11,7 @@ class FoodClass extends StatefulWidget {
   int amountOfITEMS = 0;
 
   List<String> itemNames;
-  List<double> itemPrices;
+  List<String> itemPrices;
   List<String> itemImage;
 
   FoodClass({this.FoodSection_ID, this.amountOfITEMS,this.itemImage,this.itemPrices,this.itemNames});
@@ -25,7 +25,7 @@ class _FoodClassState extends State<FoodClass> {
   int amountOfItems = 0;
   int numOfColumns = 2;
   List<String> itemNames;
-  List<double> itemPrices;
+  List<String> itemPrices;
   List<String> itemImage;
   double heightList = 0;
   @override

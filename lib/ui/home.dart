@@ -46,8 +46,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         "4CCACF64-55A7-6B67-FFC3-44558A179500",
         "BB87A32F-17D7-4C50-A9E8-4D5AFA66D881",
         "154EC8F4-6B07-43BD-BE2A-9E0C59DEDB18");
-  ///loading sharedprefsaddStringToSF();
-    StorageUtil.putBool("RefreshState", true);
   }
 
   @override
@@ -59,19 +57,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.whiteColor,
+        backgroundColor:Colors.redAccent[700],
         items:  <BottomNavigationBarItem>[
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.stars_rounded),
+            icon: Icon(Icons.stars_rounded, color: Colors.white),
             title: Text('Offers'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(MaterialCommunityIcons.food_fork_drink),
+            icon: Icon(MaterialCommunityIcons.food_fork_drink, color: Colors.white),
+
             title: Text('Menu'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesome.shopping_bag),
+            icon: Icon(FontAwesome.shopping_bag, color: Colors.white),
             title: Text('Orders'),
           ),
           BottomNavigationBarItem(
@@ -82,7 +81,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, color: Colors.white),
             title: Text('Profile'),
           ),
         ],
@@ -96,7 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       body: SafeArea(
         child: _selectedIndex!=1?Container(child:_widgetOptions.elementAt(_selectedIndex),) :Container(
-          color: AppColors.whiteColor,
+          color: Colors.redAccent[700],
           padding: EdgeInsets.all(10),
           child: Column(
             children: <Widget>[

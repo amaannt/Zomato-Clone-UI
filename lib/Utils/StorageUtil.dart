@@ -35,7 +35,7 @@ class StorageUtil {
     return _preferences.setBool(key, value);
   }
   static bool getBool(String key, {bool defValue = false}) {
-    if (_preferences == null) return defValue;
+    if (_preferences == null) return null;
     return _preferences.getBool(key) ?? defValue;
   }
   static Future<bool> putInt(String key, int value) {
@@ -46,4 +46,5 @@ class StorageUtil {
     if (_preferences == null) return defValue;
     return _preferences.getInt(key) ?? defValue;
   }
+
 }
