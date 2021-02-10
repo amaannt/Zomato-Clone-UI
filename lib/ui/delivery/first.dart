@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/constants/colors.dart';
@@ -14,6 +12,7 @@ import 'package:zomatoui/Utils/StorageUtil.dart';
 //encoding the json
 import 'dart:convert';
 
+import '../../Utils/StorageUtil.dart';
 
 class MenuPage extends StatefulWidget {
   @override
@@ -41,6 +40,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     appJustOpened = StorageUtil.getBool('RefreshState');
   }
 
+  var Jsonfoodclass;
   Future<dynamic> setItemContentOnline() async {
     //food classes query
     DataQueryBuilder queryBuilder = DataQueryBuilder()
@@ -65,6 +65,9 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     });
 
     //to add new tab change the length fo the amount of tabs
+    //save classes json
+    Jsonfoodclass = json.encode(foodTypes);
+    StorageUtil.putString("FoodClasses", Jsonfoodclass);
 
     return amountOfItems;
   }
@@ -83,14 +86,15 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   }
 
   //Json Encoders
-  var JsonItemName,JsonFoodType,JsonAmount,JsonImage,JsonPrices;
+  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices;
 
   String userID = "amaan2";
   bool appJustOpened;
   List<Widget> foodContents;
+
   ///load food pages
   Future<List<Widget>> FoodClassObjects() async {
-    print("initializing the page again : "+appJustOpened.toString());
+    print("initializing the page again : " + appJustOpened.toString());
     if (appJustOpened) {
       StorageUtil.putBool("RefreshState", false);
       foodContents = new List(amountOfItems);
@@ -115,6 +119,19 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
           }
         });
 
+        ///SAVE TO STORAGE SECTION
+        //name save on storage
+        JsonItemName = json.encode(itemNames);
+        StorageUtil.putString(foodTypes[contentIndex] + "_Name", JsonItemName);
+        //price save on storage
+        JsonPrices = json.encode(itemPrices);
+        StorageUtil.putString(foodTypes[contentIndex] + "_Prices", JsonPrices);
+        //image url save on storage
+        JsonImage = json.encode(itemImage);
+        StorageUtil.putString(foodTypes[contentIndex] + "_IMGURL", JsonImage);
+        //amount of items
+        StorageUtil.putInt(
+            foodTypes[contentIndex] + "_amount", amountOfItemContents);
 
         foodClassPage[contentIndex] = FoodClass(
           FoodSection_ID: foodTypes[contentIndex],
@@ -129,25 +146,71 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         foodContents[index] = (foodClassPage[index]);
       }
 
-
-
       return foodContents;
     } else {
       print("The food contents again:");
-    /*  var str = StorageUtil.getString('ItemName');
+      foodClassPage = new List(foodTypes.length);
+
+      foodContents = new List(foodTypes.length);
+      /*print(foodTypes.length);
+
+      foodTypes = json.decode(StorageUtil.getString('FoodClasses'));
+      print(foodTypes.length);*/
+
+      /*  var str = StorageUtil.getString('ItemName');
       var r = json.decode(str);
       print(r);*/
+
+      for (int index = 0; index < foodTypes.length; index++) {
+        amountOfItemContents = StorageUtil.getInt(foodTypes[index] + "_amount");
+        itemNames = new List(amountOfItemContents);
+        itemPrices = new List(amountOfItemContents);
+        itemImage = new List(amountOfItemContents);
+
+        itemImage =
+            convertToList(foodTypes[index], "_IMGURL", itemImage.length);
+
+        itemNames = convertToList(foodTypes[index], "_Name", itemNames.length);
+
+        itemPrices =
+            convertToList(foodTypes[index], "_Prices", itemPrices.length);
+
+        foodClassPage[index] = new FoodClass(
+          FoodSection_ID: foodTypes[index],
+          amountOfITEMS: amountOfItemContents,
+          itemImage: itemImage,
+          itemPrices: itemPrices,
+          itemNames: itemNames,
+        );
+      }
       DataQueryBuilder queryBuilderContent2 = DataQueryBuilder()
         ..whereClause = "UserID = '" + userID + "'";
       await Backendless.data
           .of("ChangesCheck")
           .find(queryBuilderContent2)
           .then((changes) {
-            print(changes[0]["ChangesDone"]);
-            StorageUtil.putBool("RefreshState", changes[0]["ChangesDone"]);
+        print(
+            "Changes Available from the server: " + changes[0]["ChangesDone"]);
+        StorageUtil.putBool("RefreshState", changes[0]["ChangesDone"]);
       });
+
+      for (int index = 0; index < amountOfItems; index++) {
+        foodContents[index] = (foodClassPage[index]);
+      }
+
       return foodContents;
     }
+  }
+
+  convertToList(String firstPartOfString, String SecondIdentifier, int len) {
+    List<String> second = new List(len);
+    var imgs = json
+        .decode(StorageUtil.getString(firstPartOfString + SecondIdentifier));
+    for (int x = 0; x < len; x++) {
+      second[x] = imgs[x].toString();
+      print(second[x]);
+    }
+    return second;
   }
 
   ///load structure of the tab bar and page

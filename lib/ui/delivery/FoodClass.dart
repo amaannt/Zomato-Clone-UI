@@ -31,6 +31,7 @@ class _FoodClassState extends State<FoodClass> {
   @override
   void initState() {
     super.initState();
+    print("Starting Class Food");
    FoodType = widget.FoodSection_ID;
    this.amountOfItems = widget.amountOfITEMS;
    this.itemNames = widget.itemNames;
