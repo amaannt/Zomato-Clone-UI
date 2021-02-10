@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -9,7 +10,9 @@ import 'package:zomatoui/ui/dinein/second.dart';
 import 'package:zomatoui/ui/gold/third.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
+///the table database
 import 'package:backendless_sdk/backendless_sdk.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -35,7 +38,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+  ///loading backendless API
     // uncomment the line below if your application is hosted in the European hosting zone of Backendless:
     Backendless.setUrl("https://eu-api.backendless.com");
 
@@ -43,8 +46,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         "4CCACF64-55A7-6B67-FFC3-44558A179500",
         "BB87A32F-17D7-4C50-A9E8-4D5AFA66D881",
         "154EC8F4-6B07-43BD-BE2A-9E0C59DEDB18");
-
+  ///loading sharedprefsaddStringToSF();
+    StorageUtil.putBool("RefreshState", true);
   }
+
   @override
   void dispose() {
     super.dispose();

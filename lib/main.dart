@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:zomatoui/ui/home.dart';
 
-void main() {
+//saving first open
+import 'package:zomatoui/Utils/StorageUtil.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageUtil.getInstance();
   runApp(MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

@@ -1,4 +1,7 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/ui/delivery/food.dart';
 import 'package:zomatoui/ui/delivery/FoodTwo.dart';
@@ -7,6 +10,10 @@ import 'package:zomatoui/ui/delivery/FoodThree.dart';
 import 'package:zomatoui/ui/delivery/FoodClass.dart';
 
 import 'package:backendless_sdk/backendless_sdk.dart';
+import 'package:zomatoui/Utils/StorageUtil.dart';
+//encoding the json
+import 'dart:convert';
+
 
 class MenuPage extends StatefulWidget {
   @override
@@ -24,13 +31,14 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   List<double> itemPrices;
   List<String> itemImage;
   int amountOfItemContents = 0;
-  Future<dynamic> _setItemContentOnline;
+  Future<List<Widget>> myFuture;
   Future<List<Widget>> _FoodClassObjects;
+
   @override
   void initState() {
     super.initState();
-    _setItemContentOnline = setItemContentOnline();
-    _FoodClassObjects = FoodClassObjects();
+    myFuture = FoodClassObjects();
+    appJustOpened = StorageUtil.getBool('RefreshState');
   }
 
   Future<dynamic> setItemContentOnline() async {
@@ -74,42 +82,72 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     return tabsFood;
   }
 
+  //Json Encoders
+  var JsonItemName,JsonFoodType,JsonAmount,JsonImage,JsonPrices;
+
+  String userID = "amaan2";
+  bool appJustOpened;
+  List<Widget> foodContents;
   ///load food pages
   Future<List<Widget>> FoodClassObjects() async {
-    List<Widget> foodContents = new List(amountOfItems);
-    //contents of the page
-    for (int contentIndex = 0; contentIndex < amountOfItems; contentIndex++) {
-      DataQueryBuilder queryBuilderContent = DataQueryBuilder()
-        ..whereClause = "Food_Type = '" + foodTypes[contentIndex] + "'";
-      await Backendless.data
-          .of("Food_Menu")
-          .find(queryBuilderContent)
-          .then((foodItems) {
-        // every loaded object from the "Contact" table is now an individual Map
-        amountOfItemContents = foodItems.length;
-        itemNames = new List(amountOfItemContents);
-        itemPrices = new List(amountOfItemContents);
-        itemImage = new List(amountOfItemContents);
-        //assigning the values from db
-        for (int i = 0; i < foodItems.length; i++) {
-          itemNames[i] = foodItems[i]["Food_Item_Name"];
-          itemPrices[i] = foodItems[i]["Food_Price"] * 1.0;
-          itemImage[i] = foodItems[i]["Food_Image_URL"];
-        }
-      });
-      foodClassPage[contentIndex] = FoodClass(
-        FoodSection_ID: foodTypes[contentIndex],
-        amountOfITEMS: amountOfItemContents,
-        itemImage: itemImage,
-        itemPrices: itemPrices,
-        itemNames: itemNames,
-      );
-    }
+    print("initializing the page again : "+appJustOpened.toString());
+    if (appJustOpened) {
+      StorageUtil.putBool("RefreshState", false);
+      foodContents = new List(amountOfItems);
+      //contents of the page
+      for (int contentIndex = 0; contentIndex < amountOfItems; contentIndex++) {
+        DataQueryBuilder queryBuilderContent = DataQueryBuilder()
+          ..whereClause = "Food_Type = '" + foodTypes[contentIndex] + "'";
+        await Backendless.data
+            .of("Food_Menu")
+            .find(queryBuilderContent)
+            .then((foodItems) {
+          // every loaded object from the "Contact" table is now an individual Map
+          amountOfItemContents = foodItems.length;
+          itemNames = new List(amountOfItemContents);
+          itemPrices = new List(amountOfItemContents);
+          itemImage = new List(amountOfItemContents);
+          //assigning the values from db
+          for (int i = 0; i < foodItems.length; i++) {
+            itemNames[i] = foodItems[i]["Food_Item_Name"];
+            itemPrices[i] = foodItems[i]["Food_Price"] * 1.0;
+            itemImage[i] = foodItems[i]["Food_Image_URL"];
+          }
+        });
 
-    for (int index = 0; index < amountOfItems; index++) {
-      foodContents[index] = (foodClassPage[index]);
+
+        foodClassPage[contentIndex] = FoodClass(
+          FoodSection_ID: foodTypes[contentIndex],
+          amountOfITEMS: amountOfItemContents,
+          itemImage: itemImage,
+          itemPrices: itemPrices,
+          itemNames: itemNames,
+        );
+      }
+
+      for (int index = 0; index < amountOfItems; index++) {
+        foodContents[index] = (foodClassPage[index]);
+      }
+
+
+
+      return foodContents;
+    } else {
+      print("The food contents again:");
+    /*  var str = StorageUtil.getString('ItemName');
+      var r = json.decode(str);
+      print(r);*/
+      DataQueryBuilder queryBuilderContent2 = DataQueryBuilder()
+        ..whereClause = "UserID = '" + userID + "'";
+      await Backendless.data
+          .of("ChangesCheck")
+          .find(queryBuilderContent2)
+          .then((changes) {
+            print(changes[0]["ChangesDone"]);
+            StorageUtil.putBool("RefreshState", changes[0]["ChangesDone"]);
+      });
+      return foodContents;
     }
-    return foodContents;
   }
 
   ///load structure of the tab bar and page
@@ -130,12 +168,17 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                 if (snapshot.data == null) {
                   return Center(child: CircularProgressIndicator());
                 } else {
-                  return Expanded(
-                    child: TabBarView(
-                        controller: tabController,
-                        //if you need to add more tabs
-                        children: snapshot.data),
-                  );
+                  try {
+                    return Expanded(
+                      child: TabBarView(
+                          controller: tabController,
+                          //if you need to add more tabs
+                          children: snapshot.data),
+                    );
+                  } catch (e) {
+                    print(e);
+                    return Center(child: CircularProgressIndicator());
+                  }
                 }
               })
         ]),
@@ -146,7 +189,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _setItemContentOnline,
+        future: setItemContentOnline(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return Center(child: CircularProgressIndicator());
