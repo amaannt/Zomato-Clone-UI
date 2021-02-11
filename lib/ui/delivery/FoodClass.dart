@@ -3,7 +3,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:zomatoui/ui/delivery/ItemPopup.dart';
-import 'package:backendless_sdk/backendless_sdk.dart';
+
+///
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FoodClass extends StatefulWidget {
   String FoodSection_ID;
@@ -14,12 +16,17 @@ class FoodClass extends StatefulWidget {
   List<String> itemPrices;
   List<String> itemImage;
 
-  FoodClass({this.FoodSection_ID, this.amountOfITEMS,this.itemImage,this.itemPrices,this.itemNames});
+  FoodClass(
+      {this.FoodSection_ID,
+      this.amountOfITEMS,
+      this.itemImage,
+      this.itemPrices,
+      this.itemNames});
   @override
   _FoodClassState createState() => _FoodClassState();
 }
 
-class _FoodClassState extends State<FoodClass> {
+class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
   String FoodType;
   double heightItem = 195;
   int amountOfItems = 0;
@@ -28,48 +35,44 @@ class _FoodClassState extends State<FoodClass> {
   List<String> itemPrices;
   List<String> itemImage;
   double heightList = 0;
+
+  AnimationController TabAnimcontroller;
+  Animation animationFade;
   @override
   void initState() {
     super.initState();
     print("Starting Class Food");
-   FoodType = widget.FoodSection_ID;
-   this.amountOfItems = widget.amountOfITEMS;
-   this.itemNames = widget.itemNames;
-   this.itemPrices = widget.itemPrices;
-   this.itemImage = widget.itemImage;
+    FoodType = widget.FoodSection_ID;
+    this.amountOfItems = widget.amountOfITEMS;
+    this.itemNames = widget.itemNames;
+    this.itemPrices = widget.itemPrices;
+    this.itemImage = widget.itemImage;
+
+    ///controlling the fade in effect
+    TabAnimcontroller =
+        AnimationController( duration: Duration(milliseconds: 400), vsync: this);
+    animationFade = Tween(begin: 0.0, end: 1.0).animate(TabAnimcontroller);
   }
+
 //function to load the list of items
   Future<dynamic> LoadItemList() async {
-/*
-    DataQueryBuilder queryBuilder = DataQueryBuilder()
-      ..whereClause = "Food_Type = '"+FoodType+"'";
-    await Backendless.data.of("Food_Menu").find(queryBuilder).then((foodItems) {
-      // every loaded object from the "Contact" table is now an individual Map
-      amountOfItems = foodItems.length;
-      itemNames = new List(amountOfItems);
-      itemPrices = new List(amountOfItems);
-      itemImage = new List(amountOfItems);
-      //assigning the values from db
-      for (int i = 0; i < foodItems.length; i++) {
-        itemNames[i] = foodItems[i]["Food_Item_Name"];
-        itemPrices[i] = foodItems[i]["Food_Price"] * 1.0;
-        itemImage[i] = foodItems[i]["Food_Image_URL"];
-      }
-      });*/
-      int listHeight = amountOfItems;
-      //check odd number of items on the list
-      if (listHeight % 2 == 1) {
-        listHeight += 1;
-      }
 
-      heightList = (listHeight / numOfColumns) * heightItem * 1.0;
+
+    int listHeight = amountOfItems;
+    //check odd number of items on the list
+    if (listHeight % 2 == 1) {
+      listHeight += 1;
+    }
+
+    heightList = (listHeight / numOfColumns) * heightItem * 1.0;
 
     //catch odd number of items and modify height as per number of items
     return heightList;
   }
 
   MakeItemList(AsyncSnapshot snapshot) {
-    return Container(
+    TabAnimcontroller.forward();
+    return FadeTransition(opacity:animationFade, child:Container(
       // height should be : amount of dishes/number of columns * item height of 195 * 1.0 double datatype
       height: snapshot.data,
       child: GridView.count(
@@ -94,51 +97,79 @@ class _FoodClassState extends State<FoodClass> {
                         child: Container(
                           constraints: new BoxConstraints.expand(
                               height: 174.0, width: 520),
-                          alignment: Alignment.bottomLeft,
+
                           padding: new EdgeInsets.only(
-                              left: 16.0, bottom: 8.0, top: 8.0),
+                              left: 0.0, bottom: 0.0, top: 0.0),
                           decoration: new BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            image: new DecorationImage(
+/*                            image: new DecorationImage(
                               image: new NetworkImage(itemImage[index]),
                               fit: BoxFit.fill,
-                            ),
+                            ),*/
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 5, right: 10, top: 5, bottom: 5),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.persianColor,
-                                        borderRadius:
-                                        BorderRadius.circular(5.0)),
-                                    child: new Text(itemNames[index],
-                                        style: new TextStyle(
-                                            fontSize: 12.0,
-                                            color: AppColors.whiteColor)),
+                              Stack(
+
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+
+                                    child:  FadeInImage.assetNetwork(
+                                      fit:BoxFit.fill,
+                                      placeholder: 'images/ImageIconFood.png',
+                                      image: itemImage[index],
+
+                                      height: 173.5,
+                                      width: 520,
+                                    ),
                                   ),
-                                  SizedBox(
-                                    width: 5.0,
+
+
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 5,
+                                            right: 10,
+                                            top: 5,
+                                            bottom: 5),
+                                        decoration: BoxDecoration(
+                                            color: Colors.black45,
+                                            borderRadius:
+                                                BorderRadius.circular(5.0)),
+                                        child: new Text(itemNames[index],
+                                            style: new TextStyle(
+                                                fontSize: 14.0,
+                                                color: AppColors.whiteColor)),
+                                      ),
+
+                                    ],
                                   ),
+                                  //pricing or name////
+                                   new Container(
+                                      ///this edge inset moves the container to the bottom
+                                      padding: EdgeInsets.only(
+                                           top: 143, left:3),
+                                      child: new Container(
+                                        padding: EdgeInsets.only(
+                                            left: 5, right: 10, top: 5, bottom: 5),
+                                        decoration: BoxDecoration(
+                                            color: Colors.blueAccent[200],
+                                            borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                        child: new Text(
+                                            itemPrices[index].toString() + " €",
+                                            style: new TextStyle(
+                                                fontSize: 12.0,
+                                                color: AppColors.whiteColor)),
+                                      ),
+                                    ),
+
+
                                 ],
-                              ),
-                              //pricing or name////
-                              Container(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 10, top: 5, bottom: 5),
-                                decoration: BoxDecoration(
-                                    color: AppColors.highlighterBlueDark,
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                child: new Text(
-                                    itemPrices[index].toString() + " €",
-                                    style: new TextStyle(
-                                        fontSize: 12.0,
-                                        color: AppColors.whiteColor)),
                               ),
                             ],
                           ),
@@ -148,13 +179,16 @@ class _FoodClassState extends State<FoodClass> {
                   ),
                 ),
               ),
+
+              ///this is where the user clicks to check the item details and add to their orders
               onTap: () {
                 ItemPopupTab("itemID1").PopupItem(context);
               });
         }),
       ),
-    );
+    ));
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(padding: const EdgeInsets.all(3), children: <Widget>[

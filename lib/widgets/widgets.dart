@@ -10,8 +10,10 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+
       color: AppColors.whiteColor,
       child: new Card(
+
         elevation: 0,
         shape: RoundedRectangleBorder(
             side: BorderSide(
@@ -21,9 +23,11 @@ class SearchBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(5)),
         color: AppColors.whiteColor,
         child: new ListTile(
+
           dense: true,
           leading: new Icon(Ionicons.ios_search,color: AppColors.blackColor,),
           title: new TextField(
+
             controller: controller,
             decoration: new InputDecoration(
                 hintText: this.hintText, border: InputBorder.none),

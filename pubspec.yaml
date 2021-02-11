@@ -38,9 +38,16 @@ dependencies:
 #  firebase_database: "^6.0.0"
   #backendless
   backendless_sdk: ^1.0.0
+  #waiting for loading widgets
   async: ^2.4.2
+#storing and caching
   shared_preferences: ^0.5.12+4
-
+  #loading images fading in
+  cached_network_image: ^2.5.0
+  #bottom bar transition
+  bottom_bar_page_transition: ^1.0.3
+  #search bar
+  flutter_search_bar: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

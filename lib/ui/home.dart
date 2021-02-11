@@ -3,10 +3,11 @@ import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:zomatoui/ui/UIElements.dart';
 import 'package:zomatoui/ui/profile/fifth.dart';
 import 'package:zomatoui/ui/delivery/first.dart';
 import 'package:zomatoui/ui/explore/fourth.dart';
-import 'package:zomatoui/ui/dinein/second.dart';
+import 'package:zomatoui/ui/dinein/offers_page.dart';
 import 'package:zomatoui/ui/gold/third.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
@@ -20,7 +21,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
+  PageController _pageController;
+  UIElements _topBar;
   static List<Widget> _widgetOptions = <Widget>[
+
     OfferPage(),
     MenuPage(),
     ThirdPage(),
@@ -30,7 +34,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void _onItemTapped(int index) {
     setState(() {
+      //EVERY TIME USER TAPS THE NAVIGATION BAR, IT CHANGES INDEX AND CHANGED PAGE
       _selectedIndex = index;
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 500), curve: Curves.easeOutSine);
     });
   }
 
@@ -38,7 +45,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-  ///loading backendless API
+    _pageController = PageController();
+    ///loading backendless API
     // uncomment the line below if your application is hosted in the European hosting zone of Backendless:
     Backendless.setUrl("https://eu-api.backendless.com");
 
@@ -51,113 +59,74 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
+    _pageController.dispose();
+
+  }
+
+  _getBottomBar() {
+    return BottomNavigationBar(
+      backgroundColor: Colors.white,
+      items: <BottomNavigationBarItem>[
+
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.stars_rounded, color: Colors.redAccent[700], size: 40,),
+          title: Text('Offers'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(MaterialCommunityIcons.food_fork_drink,
+              color: Colors.yellowAccent[700]),
+
+          title: Text('Menu'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(FontAwesome.shopping_bag, color: Colors.blueGrey),
+          title: Text('Orders'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(SimpleLineIcons.exclamation, color: Colors.pink,),
+          title: Text(
+            'DELETE \n    Tab',
+            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.red),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person, color: Colors.lightGreen),
+          title: Text('Profile'),
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: AppColors.gold,
+      unselectedItemColor: AppColors.primaryTextColorGrey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      onTap: _onItemTapped,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor:Colors.redAccent[700],
-        items:  <BottomNavigationBarItem>[
+        bottomNavigationBar: _getBottomBar(),
+        body: _bodyDesign(),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.stars_rounded, color: Colors.white),
-            title: Text('Offers'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(MaterialCommunityIcons.food_fork_drink, color: Colors.white),
-
-            title: Text('Menu'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesome.shopping_bag, color: Colors.white),
-            title: Text('Orders'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(SimpleLineIcons.exclamation,color: Colors.pink,),
-            title: Text(
-                'DELETE \n    Tab',
-                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.red),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.white),
-            title: Text('Profile'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.blackColor,
-        unselectedItemColor: AppColors.primaryTextColorGrey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        onTap: _onItemTapped,
-      ),
-      body: SafeArea(
-        child: _selectedIndex!=1?Container(child:_widgetOptions.elementAt(_selectedIndex),) :Container(
-          color: Colors.redAccent[700],
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 15.0, right: 10),
-                      child: Icon(
-                        SimpleLineIcons.location_pin,
-                        size: 35,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Home',
-                            textAlign: TextAlign.left,
-                            style: TextStyles.actionTitle,
-                          ),
-                          Text(
-                            'MG Road Bangalore',
-                            textAlign: TextAlign.left,
-                            style: TextStyles.subText,
-                          ),
-                          Divider(
-                            color: AppColors.blackColor,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: Container(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Icon(
-                      Icons.payment,
-                      color: AppColors.blackColor,
-                      size: 25,
-                    ),
-                  ),
-                ],
-              ),
-              SearchBar('Search for Item'),
-              _widgetOptions.elementAt(_selectedIndex),
-
-            ],
-          ),
-        ),
-      ),
     );
+  }
+
+  _bodyDesign() {
+    return    SafeArea(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() => _selectedIndex = index);
+          },
+
+          children:
+            _widgetOptions,
+
+        ),
+      );
+
   }
 }
