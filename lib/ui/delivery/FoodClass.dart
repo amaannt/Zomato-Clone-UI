@@ -29,9 +29,9 @@ class FoodClass extends StatefulWidget {
 
 class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
   String FoodType;
-  double heightItem = 195;
+  final double heightItem = 195;
   int amountOfItems = 0;
-  int numOfColumns = 2;
+  final int numOfColumns = 2;
   List<String> itemNames;
   List<String> itemPrices;
   List<String> itemImage;
@@ -191,6 +191,11 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
     ));
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return ListView(padding: const EdgeInsets.all(3), children: <Widget>[

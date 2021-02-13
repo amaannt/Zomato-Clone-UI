@@ -48,6 +48,9 @@ dependencies:
   bottom_bar_page_transition: ^1.0.3
   #search bar
   flutter_search_bar: ^2.1.0
+
+  #top snackbar
+  flushbar: ^1.10.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
