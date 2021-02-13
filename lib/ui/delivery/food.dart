@@ -1,5 +1,5 @@
 /*import 'dart:html';*/
-
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zomatoui/constants/colors.dart';
@@ -71,9 +71,9 @@ class _FoodTabIndianState extends State<FoodTabIndian> {
         physics: NeverScrollableScrollPhysics(),
         crossAxisCount: numOfColumns,
         children: List.generate(amountOfItems, (index) {
-          /*  if (posts == null) {
+          *//*  if (posts == null) {
                             return circularProgress();
-                          }*/
+                          }*//*
           return InkWell(
               child: Container(
                 padding: EdgeInsets.all(5),
@@ -147,12 +147,13 @@ class _FoodTabIndianState extends State<FoodTabIndian> {
                 ),
               ),
               onTap: () {
-                ItemPopupTab("itemID1").PopupItem(context);
+                ItemPopupTab(itemNames[index],itemDescription[index]).PopupItem(context);
               });
         }),
       ),
     );
-  }
+  }*/
+/*
 
   List<Map> foodItems;
   @override
@@ -390,3 +391,4 @@ class _FoodTabIndianState extends State<FoodTabIndian> {
     );
   }
 }
+*/

@@ -15,13 +15,14 @@ class FoodClass extends StatefulWidget {
   List<String> itemNames;
   List<String> itemPrices;
   List<String> itemImage;
-
+  List<String> itemDescription;
   FoodClass(
       {this.FoodSection_ID,
       this.amountOfITEMS,
       this.itemImage,
       this.itemPrices,
-      this.itemNames});
+      this.itemNames,
+      this.itemDescription,});
   @override
   _FoodClassState createState() => _FoodClassState();
 }
@@ -34,6 +35,7 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
   List<String> itemNames;
   List<String> itemPrices;
   List<String> itemImage;
+  List<String> itemDescription;
   double heightList = 0;
 
   AnimationController TabAnimcontroller;
@@ -47,7 +49,7 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
     this.itemNames = widget.itemNames;
     this.itemPrices = widget.itemPrices;
     this.itemImage = widget.itemImage;
-
+    this.itemDescription = widget.itemDescription;
     ///controlling the fade in effect
     TabAnimcontroller =
         AnimationController( duration: Duration(milliseconds: 400), vsync: this);
@@ -182,7 +184,7 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
 
               ///this is where the user clicks to check the item details and add to their orders
               onTap: () {
-                ItemPopupTab("itemID1").PopupItem(context);
+                ItemPopupTab(itemNames[index],itemDescription[index]).PopupItem(context);
               });
         }),
       ),

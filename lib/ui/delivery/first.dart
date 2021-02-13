@@ -33,12 +33,12 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   List<String> itemNames;
   List<String> itemPrices;
   List<String> itemImage;
+  List<String> itemDescription;
   int amountOfItemContents = 0;
   Future<List<Widget>> myFuture;
 
-
   //Json Encoders
-  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices;
+  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices, JsonDesc;
 
   //remove id from here
   String userID = "amaan2";
@@ -49,6 +49,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
 
   ///Access UI elements from UI ELEMENTS class
   UIElements _topBar;
+
   ///fade effects controller
   AnimationController TabAnimcontroller;
   Animation animationFade;
@@ -60,8 +61,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     _topBar = new UIElements();
 
     ///animation tab fade controller
-    TabAnimcontroller =
-        AnimationController(duration: Duration(seconds: 1, milliseconds: 200), vsync: this);
+    TabAnimcontroller = AnimationController(
+        duration: Duration(seconds: 1, milliseconds: 200), vsync: this);
     animationFade = Tween(begin: 0.0, end: 1.2).animate(TabAnimcontroller);
 
     ///check if app has been opened for the first time
@@ -160,12 +161,12 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       TabAnimcontroller.forward();
       tabsFood[index] = (new Tab(
           child: FadeTransition(
-            opacity: animationFade,
-            child: Text(
-        foodTypes[index],
-        style: TextStyle(fontSize: 20, letterSpacing: 2.0),
-      ),
-          )));
+        opacity: animationFade,
+        child: Text(
+          foodTypes[index],
+          style: TextStyle(fontSize: 20, letterSpacing: 2.0),
+        ),
+      )));
     }
     return tabsFood;
   }
@@ -188,11 +189,13 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         itemNames = new List(amountOfItemContents);
         itemPrices = new List(amountOfItemContents);
         itemImage = new List(amountOfItemContents);
+        itemDescription = new List(amountOfItemContents);
         //assigning the values from db
         for (int i = 0; i < foodItems.length; i++) {
           itemNames[i] = foodItems[i]["Food_Item_Name"];
           itemPrices[i] = foodItems[i]["Food_Price"].toString();
           itemImage[i] = foodItems[i]["Food_Image_URL"];
+          itemDescription[i] = foodItems[i]["Food_Description"];
         }
       });
 
@@ -206,6 +209,9 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       //image url save on storage
       JsonImage = json.encode(itemImage);
       StorageUtil.putString(foodTypes[contentIndex] + "_IMGURL", JsonImage);
+      //save Description on storage
+      JsonDesc = json.encode(itemDescription);
+      StorageUtil.putString(foodTypes[contentIndex] + "_Description", JsonDesc);
       //amount of items
       StorageUtil.putInt(
           foodTypes[contentIndex] + "_amount", amountOfItemContents);
@@ -216,6 +222,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         itemImage: itemImage,
         itemPrices: itemPrices,
         itemNames: itemNames,
+        itemDescription: itemDescription,
       );
     }
 
@@ -237,7 +244,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       itemNames = new List(amountOfItemContents);
       itemPrices = new List(amountOfItemContents);
       itemImage = new List(amountOfItemContents);
-
+      itemDescription = new List(amountOfItemContents);
       itemImage = convertToList(foodTypes[index], "_IMGURL", itemImage.length);
 
       itemNames = convertToList(foodTypes[index], "_Name", itemNames.length);
@@ -245,12 +252,16 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       itemPrices =
           convertToList(foodTypes[index], "_Prices", itemPrices.length);
 
+      itemDescription = convertToList(
+          foodTypes[index], "_Description", itemDescription.length);
+
       foodClassPage[index] = new FoodClass(
         FoodSection_ID: foodTypes[index],
         amountOfITEMS: amountOfItemContents,
         itemImage: itemImage,
         itemPrices: itemPrices,
         itemNames: itemNames,
+        itemDescription: itemDescription,
       );
     }
 
@@ -272,8 +283,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     }
     return second;
   }
-
-
 
   ///load structure of the tab bar and page
   Widget TabMenu() {
