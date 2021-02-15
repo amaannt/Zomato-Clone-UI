@@ -4,134 +4,128 @@ import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:zomatoui/ui/delivery/ItemPopup.dart';
 
-///
-import 'package:cached_network_image/cached_network_image.dart';
-
 class FoodClass extends StatefulWidget {
-  String FoodSection_ID;
+  String foodSectionName;
 
   int amountOfITEMS = 0;
 
   List<String> itemNames;
+  List<String> itemID;
   List<String> itemPrices;
   List<String> itemImage;
   List<String> itemDescription;
-  FoodClass(
-      {this.FoodSection_ID,
-      this.amountOfITEMS,
-      this.itemImage,
-      this.itemPrices,
-      this.itemNames,
-      this.itemDescription,});
+  FoodClass({
+    this.foodSectionName,
+    this.amountOfITEMS,
+    this.itemImage,
+    this.itemPrices,
+    this.itemNames,
+    this.itemID,
+    this.itemDescription,
+  });
   @override
   _FoodClassState createState() => _FoodClassState();
 }
 
 class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
-  String FoodType;
-  final double heightItem = 195;
+  String foodType;
+  final double heightItem = 202;
   int amountOfItems = 0;
   final int numOfColumns = 2;
   List<String> itemNames;
+  List<String> itemID;
   List<String> itemPrices;
   List<String> itemImage;
   List<String> itemDescription;
   double heightList = 0;
 
-  AnimationController TabAnimcontroller;
+  AnimationController tabAnimationcontroller;
   Animation animationFade;
   @override
   void initState() {
     super.initState();
     print("Starting Class Food");
-    FoodType = widget.FoodSection_ID;
+    foodType = widget.foodSectionName;
+    this.itemID = widget.itemID;
     this.amountOfItems = widget.amountOfITEMS;
     this.itemNames = widget.itemNames;
     this.itemPrices = widget.itemPrices;
     this.itemImage = widget.itemImage;
     this.itemDescription = widget.itemDescription;
+
     ///controlling the fade in effect
-    TabAnimcontroller =
-        AnimationController( duration: Duration(milliseconds: 400), vsync: this);
-    animationFade = Tween(begin: 0.0, end: 1.0).animate(TabAnimcontroller);
+    tabAnimationcontroller =
+        AnimationController(duration: Duration(milliseconds: 400), vsync: this);
+    animationFade = Tween(begin: 0.0, end: 1.0).animate(tabAnimationcontroller);
   }
 
 //function to load the list of items
-  Future<dynamic> LoadItemList() async {
-
-
+  Future<dynamic> loadItemList() async {
     int listHeight = amountOfItems;
     //check odd number of items on the list
     if (listHeight % 2 == 1) {
       listHeight += 1;
     }
-
     heightList = (listHeight / numOfColumns) * heightItem * 1.0;
-
     //catch odd number of items and modify height as per number of items
     return heightList;
   }
 
-  MakeItemList(AsyncSnapshot snapshot) {
-    TabAnimcontroller.forward();
-    return FadeTransition(opacity:animationFade, child:Container(
-      // height should be : amount of dishes/number of columns * item height of 195 * 1.0 double datatype
-      height: snapshot.data,
-      child: GridView.count(
-        physics: NeverScrollableScrollPhysics(),
-        crossAxisCount: numOfColumns,
-        children: List.generate(amountOfItems, (index) {
-          return InkWell(
-              child: Container(
-                padding: EdgeInsets.all(5),
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        color: AppColors.separatorGrey,
+  makeItemList(AsyncSnapshot snapshot) {
+    tabAnimationcontroller.forward();
+    return FadeTransition(
+        opacity: animationFade,
+        child: Container(
+          // height should be : amount of dishes/number of columns * item height of 195 * 1.0 double datatype
+          height: snapshot.data,
+          child: GridView.count(
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: numOfColumns,
+            children: List.generate(amountOfItems, (index) {
+              return InkWell(
+                  child: Container(
+
+                    padding: EdgeInsets.all(0),
+                    child: Card(
+                      semanticContainer: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      borderRadius: BorderRadius.circular(5)),
-                  color: AppColors.whiteColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          constraints: new BoxConstraints.expand(
-                              height: 174.0, width: 520),
+                      elevation: 5,
+                      margin: EdgeInsets.all(9),
 
-                          padding: new EdgeInsets.only(
-                              left: 0.0, bottom: 0.0, top: 0.0),
-                          decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-/*                            image: new DecorationImage(
-                              image: new NetworkImage(itemImage[index]),
-                              fit: BoxFit.fill,
-                            ),*/
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Stack(
+                      color: AppColors.whiteColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              /*constraints:
+                                  new BoxConstraints.expand(height: 173.5),
+                              padding: new EdgeInsets.only(
+                                  left: 0.0, bottom: 0.0, top: 0.0),
+                              decoration: new BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                              ),*/
+                              child: Column(
+                                // mainAxisAlignment:                                    MainAxisAlignment.spaceBetween,
+                                //crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        //borderRadius: BorderRadius.circular(9),
+                                        child: FadeInImage.assetNetwork(
+                                          fit: BoxFit.fill,
+                                          placeholder:
+                                              'assets/images/placeholder/ImageIconFood.png',
+                                          image: itemImage[index],
+                                          height: 184.7,
+                                          width: 520,
+                                        ),
+                                      ),
 
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-
-                                    child:  FadeInImage.assetNetwork(
-                                      fit:BoxFit.fill,
-                                      placeholder: 'images/ImageIconFood.png',
-                                      image: itemImage[index],
-
-                                      height: 173.5,
-                                      width: 520,
-                                    ),
-                                  ),
-
-
-                                  Row(
-                                    children: <Widget>[
                                       Container(
                                         padding: EdgeInsets.only(
                                             left: 5,
@@ -148,54 +142,59 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
                                                 color: AppColors.whiteColor)),
                                       ),
 
+                                      //pricing or name////
+                                      Container(
+                                        ///this edge inset moves the container to the bottom
+                                        padding:
+                                            EdgeInsets.only(top: 154, left: 4),
+                                        child: new Container(
+                                          padding: EdgeInsets.only(
+                                              left: 10,
+                                              right: 10,
+                                              top: 5,
+                                              bottom: 5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.blueAccent[200],
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                          child: new Text(
+                                              itemPrices[index].toString() +
+                                                  " €",
+                                              style: new TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: AppColors.whiteColor)),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  //pricing or name////
-                                   new Container(
-                                      ///this edge inset moves the container to the bottom
-                                      padding: EdgeInsets.only(
-                                           top: 143, left:3),
-                                      child: new Container(
-                                        padding: EdgeInsets.only(
-                                            left: 5, right: 10, top: 5, bottom: 5),
-                                        decoration: BoxDecoration(
-                                            color: Colors.blueAccent[200],
-                                            borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                        child: new Text(
-                                            itemPrices[index].toString() + " €",
-                                            style: new TextStyle(
-                                                fontSize: 12.0,
-                                                color: AppColors.whiteColor)),
-                                      ),
-                                    ),
-
-
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              ///this is where the user clicks to check the item details and add to their orders
-              onTap: () {
-                ItemPopupTab(itemNames[index],itemDescription[index]).PopupItem(context);
-              });
-        }),
-      ),
-    ));
+                  ///this is where the user clicks to check the item details and add to their orders
+                  onTap: () {
+                    ItemPopupTab(itemNames[index], itemDescription[index],
+                            itemID[index], itemPrices[index], itemImage[index])
+                        .PopupItem(context);
+                  });
+            }),
+          ),
+        ));
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
+
+    tabAnimationcontroller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(padding: const EdgeInsets.all(3), children: <Widget>[
@@ -412,13 +411,13 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
       ),
       //grid menu which will be made
       FutureBuilder(
-          future: LoadItemList(),
+          future: loadItemList(),
           builder: (context, snapshot) {
             if (snapshot.data == null) {
               return Center(child: CircularProgressIndicator());
             } else {
               try {
-                return MakeItemList(snapshot);
+                return makeItemList(snapshot);
               } catch (e) {
                 return CircularProgressIndicator();
               }

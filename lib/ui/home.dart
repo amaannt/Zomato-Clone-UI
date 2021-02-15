@@ -8,7 +8,7 @@ import 'package:zomatoui/ui/profile/fifth.dart';
 import 'package:zomatoui/ui/delivery/first.dart';
 import 'package:zomatoui/ui/explore/fourth.dart';
 import 'package:zomatoui/ui/dinein/offers_page.dart';
-import 'package:zomatoui/ui/gold/third.dart';
+import 'package:zomatoui/ui/OrderFoodCart/OrderPayPage.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
 ///the table database
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     OfferPage(),
     MenuPage(),
-    ThirdPage(),
+    FoodCart(),
     FourthPage(),
     FifthPage(),
   ];

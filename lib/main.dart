@@ -25,6 +25,11 @@ void main() async {
 
 Future<bool> isFirstTime() async {
   var isFirstTime = StorageUtil.getBool('FirstOpen');
+  ///empty cart
+  StorageUtil.putString("Cart_ItemName", "");
+  StorageUtil.putString("Cart_ItemPrice", "");
+  StorageUtil.putString("Cart_ItemID", "");
+  StorageUtil.putString("Cart_ItemImage", "");
   print("Opened for the first time : " + isFirstTime.toString());
   if (isFirstTime != null && !isFirstTime) {
     StorageUtil.putBool('FirstOpen', false);

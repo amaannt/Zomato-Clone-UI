@@ -1,57 +1,97 @@
+import 'dart:convert';
+
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_beautiful_popup/main.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:zomatoui/Utils/StorageUtil.dart';
 
 class ItemPopupTab {
-  String ItemID;
+  String itemID;
   String ItemName;
   String ItemDescription;
+  String itemPrice;
+  String itemImage;
 
-  ItemPopupTab(String ItemName, String ItemDesc, String ItemID) {
-    this.ItemName = ItemName;
-    this.ItemDescription = ItemDesc;
-    this.ItemID = ItemID;
+  ItemPopupTab(String itemName, String itemDesc, String itemID,
+      String itemPrice, String itemIMG) {
+    this.ItemName = itemName;
+    this.ItemDescription = itemDesc;
+    this.itemID = itemID;
+    this.itemPrice = itemPrice;
+    this.itemImage = itemIMG;
   }
-  void GetItemInfo() {
-    /*DocumentSnapshot doc = await followersRef
-        .document(widget.profileId)
-        .collection('userFollowers')
-        .document(currentUserId)
-        .get();
-    setState(() {
-      isFollowing = doc.exists;
-    });*/
+
+  ///convert string from the storage to list
+  ///this is working
+  convertAndAddToList(String firstPartOfString, String Item) {
+    var imgs = json.decode(StorageUtil.getString(firstPartOfString));
+
+    //print(imgs.toString());
+    List<String> second = new List(imgs.length + 1);
+    for (int x = 0; x < imgs.length; x++) {
+      if (imgs[x] != null) second[x] = (imgs[x]);
+    }
+    //add the last element
+    second[imgs.length] = Item;
+    return second;
   }
 
   ConfirmOrder(BuildContext context) {
     print("Ordered");
-     Flushbar(
-      borderRadius:0.5,
+    if (StorageUtil.getString("Cart_ItemName") == null ||
+        StorageUtil.getString("Cart_ItemName") == "") {
+      var jsonID = json.encode([itemID]);
+      StorageUtil.putString("Cart_ItemID", jsonID);
 
+      var jsonName = json.encode([ItemName]);
+      StorageUtil.putString("Cart_ItemName", jsonName);
+
+      var jsonPrice = json.encode([itemPrice]);
+      StorageUtil.putString("Cart_ItemPrice", jsonPrice);
+
+      var jsonIMG = json.encode([itemImage]);
+      StorageUtil.putString("Cart_ItemImage", jsonIMG);
+    } else {
+      //convert storage string to list
+      //add new item to list
+      List<String> itemI = convertAndAddToList("Cart_ItemID", itemID);
+      List<String> itemNm = convertAndAddToList("Cart_ItemName", ItemName);
+      List<String> itemP = convertAndAddToList("Cart_ItemPrice", itemPrice);
+      List<String> itemIMG = convertAndAddToList("Cart_ItemImage", itemImage);
+
+      //convert back to stringitemImage and store in shareprefs
+      var jsonID = json.encode(itemI);
+      StorageUtil.putString("Cart_ItemID", jsonID);
+      var jsonName = json.encode(itemNm);
+      StorageUtil.putString("Cart_ItemName", jsonName);
+      var jsonPrice = json.encode(itemP);
+      StorageUtil.putString("Cart_ItemPrice", jsonPrice);
+      var jsonIMG = json.encode(itemIMG);
+      StorageUtil.putString("Cart_ItemImage", jsonIMG);
+    }
+
+    Flushbar(
+      borderRadius: 0.5,
       backgroundColor: Colors.red[900],
-      messageText:Column(
+      messageText: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(ItemName,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          Text(" Has been added to your current orders!",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          Text(
+            " Has been added to your current orders!",
             style: TextStyle(color: Colors.lightBlue[50]),
             softWrap: true,
             textAlign: TextAlign.center,
           ),
-
         ],
       ),
-
-      duration:  Duration(seconds: 1, milliseconds: 500),
+      duration: Duration(seconds: 1, milliseconds: 500),
       flushbarPosition: FlushbarPosition.TOP,
       routeBlur: 0.7,
-      blockBackgroundInteraction:true,
+      blockBackgroundInteraction: true,
     )..show(context);
-
   }
 
   AnimationController anim1;
@@ -90,8 +130,7 @@ class ItemPopupTab {
                 ),
               ),
               FlatButton(
-                  onPressed: (){
-
+                  onPressed: () {
                     ConfirmOrder(context);
                   },
                   child: Icon(Icons.add_shopping_cart))

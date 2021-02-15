@@ -26,7 +26,7 @@ class StorageUtil {
     if (_preferences == null) return defValue;
     return _preferences.getString(key) ?? defValue;
   }
-  static Future<bool> clrString() {
+  static clrString() {
     SharedPreferences prefs = _preferences;
     prefs.clear();
   }

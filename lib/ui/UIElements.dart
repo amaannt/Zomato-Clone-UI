@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:zomatoui/constants/colors.dart';
-import 'package:zomatoui/constants/textstyles.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
 class UIElements extends StatefulWidget {

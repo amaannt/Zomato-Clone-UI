@@ -31,6 +31,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
 
   ///the variables for each food class
   List<String> itemNames;
+  List<String> itemID;
   List<String> itemPrices;
   List<String> itemImage;
   List<String> itemDescription;
@@ -38,7 +39,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   Future<List<Widget>> myFuture;
 
   //Json Encoders
-  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices, JsonDesc;
+  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices, JsonDesc, JsonID;
 
   //remove id from here
   String userID = "amaan2";
@@ -187,12 +188,14 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         // every loaded object from the "Contact" table is now an individual Map
         amountOfItemContents = foodItems.length;
         itemNames = new List(amountOfItemContents);
+        itemID = new List(amountOfItemContents);
         itemPrices = new List(amountOfItemContents);
         itemImage = new List(amountOfItemContents);
         itemDescription = new List(amountOfItemContents);
         //assigning the values from db
         for (int i = 0; i < foodItems.length; i++) {
           itemNames[i] = foodItems[i]["Food_Item_Name"];
+          itemID[i] = foodItems[i]["objectId"];
           itemPrices[i] = foodItems[i]["Food_Price"].toString();
           itemImage[i] = foodItems[i]["Food_Image_URL"];
           itemDescription[i] = foodItems[i]["Food_Description"];
@@ -212,16 +215,20 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       //save Description on storage
       JsonDesc = json.encode(itemDescription);
       StorageUtil.putString(foodTypes[contentIndex] + "_Description", JsonDesc);
+      //save ID on storage
+      JsonID = json.encode(itemID);
+      StorageUtil.putString(foodTypes[contentIndex] + "_ID", JsonID);
       //amount of items
       StorageUtil.putInt(
           foodTypes[contentIndex] + "_amount", amountOfItemContents);
 
       foodClassPage[contentIndex] = FoodClass(
-        FoodSection_ID: foodTypes[contentIndex],
+        foodSectionName: foodTypes[contentIndex],
         amountOfITEMS: amountOfItemContents,
         itemImage: itemImage,
         itemPrices: itemPrices,
         itemNames: itemNames,
+        itemID: itemID,
         itemDescription: itemDescription,
       );
     }
@@ -242,12 +249,15 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     for (int index = 0; index < foodTypes.length; index++) {
       amountOfItemContents = StorageUtil.getInt(foodTypes[index] + "_amount");
       itemNames = new List(amountOfItemContents);
+      itemID = new List(amountOfItemContents);
       itemPrices = new List(amountOfItemContents);
       itemImage = new List(amountOfItemContents);
       itemDescription = new List(amountOfItemContents);
       itemImage = convertToList(foodTypes[index], "_IMGURL", itemImage.length);
 
       itemNames = convertToList(foodTypes[index], "_Name", itemNames.length);
+
+      itemID = convertToList(foodTypes[index], "_ID", itemID.length);
 
       itemPrices =
           convertToList(foodTypes[index], "_Prices", itemPrices.length);
@@ -256,10 +266,11 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
           foodTypes[index], "_Description", itemDescription.length);
 
       foodClassPage[index] = new FoodClass(
-        FoodSection_ID: foodTypes[index],
+        foodSectionName: foodTypes[index],
         amountOfITEMS: amountOfItemContents,
         itemImage: itemImage,
         itemPrices: itemPrices,
+        itemID: itemID,
         itemNames: itemNames,
         itemDescription: itemDescription,
       );
@@ -331,6 +342,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     // TODO: implement dispose
+    TabAnimcontroller.dispose();
     super.dispose();
   }
 
