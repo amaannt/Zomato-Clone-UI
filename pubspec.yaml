@@ -51,6 +51,9 @@ dependencies:
 
   #top snackbar
   flushbar: ^1.10.4
+  #animated text
+  animated_text_kit: ^3.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

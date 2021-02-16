@@ -35,8 +35,21 @@ class ItemPopupTab {
     return second;
   }
 
+  orderExistsInList(String item){
+    bool isExist = false;
+    print("Order reached here");
+    var imgs = json.decode(StorageUtil.getString("Cart_ItemName"));
+
+    for(int x =0 ; x< imgs.length; x++){
+      if(item == imgs[x]){
+        isExist = true;
+      }
+    }
+    return isExist;
+  }
   ConfirmOrder(BuildContext context) {
     print("Ordered");
+    //if there is nothing at all in the orders
     if (StorageUtil.getString("Cart_ItemName") == null ||
         StorageUtil.getString("Cart_ItemName") == "") {
       var jsonID = json.encode([itemID]);
@@ -50,23 +63,38 @@ class ItemPopupTab {
 
       var jsonIMG = json.encode([itemImage]);
       StorageUtil.putString("Cart_ItemImage", jsonIMG);
-    } else {
-      //convert storage string to list
-      //add new item to list
-      List<String> itemI = convertAndAddToList("Cart_ItemID", itemID);
-      List<String> itemNm = convertAndAddToList("Cart_ItemName", ItemName);
-      List<String> itemP = convertAndAddToList("Cart_ItemPrice", itemPrice);
-      List<String> itemIMG = convertAndAddToList("Cart_ItemImage", itemImage);
 
-      //convert back to stringitemImage and store in shareprefs
-      var jsonID = json.encode(itemI);
-      StorageUtil.putString("Cart_ItemID", jsonID);
-      var jsonName = json.encode(itemNm);
-      StorageUtil.putString("Cart_ItemName", jsonName);
-      var jsonPrice = json.encode(itemP);
-      StorageUtil.putString("Cart_ItemPrice", jsonPrice);
-      var jsonIMG = json.encode(itemIMG);
-      StorageUtil.putString("Cart_ItemImage", jsonIMG);
+      //this line puts the preexisting items value as one and resets any other value previously
+      StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "1");
+    } else {
+
+      //check if item exists
+      if(orderExistsInList(ItemName)){
+
+        int quantityOfItem = int.parse(StorageUtil.getString("Cart_ItemQuantity_" + ItemName));
+        quantityOfItem +=1;
+        StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "$quantityOfItem");
+      } else{
+        print("Order Present");
+        //convert storage string to list
+        //add new item to list
+        List<String> itemI = convertAndAddToList("Cart_ItemID", itemID);
+        List<String> itemNm = convertAndAddToList("Cart_ItemName", ItemName);
+        List<String> itemP = convertAndAddToList("Cart_ItemPrice", itemPrice);
+        List<String> itemIMG = convertAndAddToList("Cart_ItemImage", itemImage);
+
+        //convert back to stringitemImage and store in shareprefs
+        var jsonID = json.encode(itemI);
+        StorageUtil.putString("Cart_ItemID", jsonID);
+        var jsonName = json.encode(itemNm);
+        StorageUtil.putString("Cart_ItemName", jsonName);
+        var jsonPrice = json.encode(itemP);
+        StorageUtil.putString("Cart_ItemPrice", jsonPrice);
+        var jsonIMG = json.encode(itemIMG);
+        StorageUtil.putString("Cart_ItemImage", jsonIMG);
+        StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "1");
+      }
+
     }
 
     Flushbar(

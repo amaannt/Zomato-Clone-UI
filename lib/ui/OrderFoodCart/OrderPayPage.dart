@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
-import '../delivery/ItemPopup.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class FoodCart extends StatefulWidget {
   @override
@@ -15,6 +15,7 @@ class _FoodCartState extends State<FoodCart> {
   List<String> itemPrice;
   List<String> itemID;
   List<String> itemImage;
+  List<int> quantityItem;
   int orderAmount;
   bool isCartEmpty;
   double serviceCharge = 0.0;
@@ -47,6 +48,11 @@ class _FoodCartState extends State<FoodCart> {
       itemID = convertToList("Cart_ItemID");
       itemImage = convertToList("Cart_ItemImage");
       orderAmount = itemID.length;
+      quantityItem = new List(itemName.length);
+      for (int x = 0; x < itemName.length; x++) {
+        quantityItem[x] = int.parse(
+            StorageUtil.getString("Cart_ItemQuantity_" + itemName[x]));
+      }
     }
   }
 
@@ -75,7 +81,6 @@ class _FoodCartState extends State<FoodCart> {
           title: Text('Empty your Cart?'),
           content: SingleChildScrollView(
             child: Text('Are you sure you want to delete all items?'),
-
           ),
           actions: <Widget>[
             TextButton(
@@ -98,15 +103,18 @@ class _FoodCartState extends State<FoodCart> {
     );
   }
 
-  _calculateTotal(){
-    double total =serviceCharge;
-    for(int x = 0; x<itemPrice.length;x++){
-      total += double.parse(itemPrice[x]);
+  _calculateTotal() {
+    double total = serviceCharge;
+    for (int x = 0; x < itemPrice.length; x++) {
+      total += double.parse(itemPrice[x]) * quantityItem[x];
     }
     return total;
   }
+
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFFFAFAFA),
@@ -132,16 +140,19 @@ class _FoodCartState extends State<FoodCart> {
                   !isCartEmpty
                       ? TextButton(
                           style: TextButton.styleFrom(
-                              backgroundColor: Colors.red[700],
-
-                             ),
-
-                          onPressed: (){_showDeleteWarning();},
+                            backgroundColor: Colors.red[700],
+                          ),
+                          onPressed: () {
+                            _showDeleteWarning();
+                          },
                           child: Container(
-                            child: Text("Cancel Order",
+                            child: Text(
+                              "Cancel Order",
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w300, color: Colors.white),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white),
                             ),
                           ))
                       : Container(),
@@ -173,8 +184,12 @@ class _FoodCartState extends State<FoodCart> {
                                     productName: "${itemName[index]}",
                                     productPrice: "€${itemPrice[index]}",
                                     productImage: "ic_popular_food_1",
-                                    productCartQuantity: "2"),
-                                (index < orderAmount-1 )? Divider() : Container(),
+                                    productCartQuantity: StorageUtil.getString(
+                                        "Cart_ItemQuantity_" +
+                                            itemName[index])),
+                                (index < orderAmount - 1)
+                                    ? Divider()
+                                    : Container(),
                               ],
                             );
                           },
@@ -195,10 +210,14 @@ class _FoodCartState extends State<FoodCart> {
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 17,color: Colors.black26),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 17,
+                                  color: Colors.black26),
                             )),
                       ),
                     ]),
+
+              ///this section edits the total price panel widget
               !isCartEmpty
                   ? Container(
                       padding: EdgeInsets.all(15),
@@ -214,11 +233,56 @@ class _FoodCartState extends State<FoodCart> {
                           ),
                           child: CartItem(
                               productName: "Total Price:",
-                              productPrice:  "€"+_calculateTotal().toString() + " (Plus tax)",
+                              productPrice: "€" +
+                                  _calculateTotal().toString() +
+                                  " (Plus tax)",
                               productImage: "",
-                              productCartQuantity: "2")),
+                              productCartQuantity: "")),
                     )
-                  : Container()
+                  : Container(),
+
+              ///this section edits the button and text if there is no button
+              !isCartEmpty
+                  ? Container(
+                      height: 60,
+                      width: queryData.size.width * 0.9,
+                      child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue[600],
+                          ),
+                          onPressed: () {},
+                          child: Container(
+                            child: Text(
+                              "Confirm Order",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  fontSize: 18),
+                            ),
+                          )))
+                  : Column(children: <Widget>[
+                      Container(
+                        height: queryData.size.height * 0.1,
+                      ),
+                      SizedBox(
+                        width: 250.0,
+                        child: TypewriterAnimatedTextKit(
+                          speed: Duration(milliseconds: 55),
+                          onTap: () {
+                            print("Tap Event");
+                          },
+                          text: [
+                            "hungry?",
+                            "don't be.",
+                            "Try our awesome offers. :D",
+                          ],
+                          textStyle:
+                              TextStyle(fontSize: 30.0, fontFamily: "Agne",color: Colors.black45),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ]),
             ],
           ),
         ));
@@ -267,7 +331,7 @@ class CartItem extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Center(
                     child: Image.asset(
-                  "images/placeholder/ImageIconFood.png",
+                  "assets/images/placeholder/ImageIconFood.png",
                   width: 110,
                   height: 100,
                 )),
@@ -309,6 +373,16 @@ class CartItem extends StatelessWidget {
                             textAlign: TextAlign.left,
                           ),
                         ),
+                        Container(
+                          child: Text(
+                            "Quantity: $productCartQuantity",
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black38,
+                                fontWeight: FontWeight.w400),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -317,7 +391,7 @@ class CartItem extends StatelessWidget {
                     Container(
                       alignment: Alignment.centerRight,
                       child: Image.asset(
-                        "images/placeholder/ImageIconFood.png",
+                        "assets/images/placeholder/ImageIconFood.png",
                         width: 25,
                         height: 25,
                       ),
