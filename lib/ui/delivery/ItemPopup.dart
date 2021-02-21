@@ -108,7 +108,7 @@ class ItemPopupTab {
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           Text(
-            " Has been added to your current orders!",
+            " has been added to your basket!",
             style: TextStyle(color: Colors.lightBlue[50]),
             softWrap: true,
             textAlign: TextAlign.center,

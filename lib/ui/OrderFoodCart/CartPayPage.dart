@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:zomatoui/constants/colors.dart';
 
 class FoodCart extends StatefulWidget {
   @override
@@ -11,6 +14,14 @@ class FoodCart extends StatefulWidget {
 }
 
 class _FoodCartState extends State<FoodCart> {
+  ///User Information
+  String userID;
+  String userAddress;
+  String userPhone_Number;
+  String paymentStatus;
+  String paymentType;
+
+  ///Item Information
   List<String> itemName;
   List<String> itemPrice;
   List<String> itemID;
@@ -19,6 +30,7 @@ class _FoodCartState extends State<FoodCart> {
   int orderAmount;
   bool isCartEmpty;
   double serviceCharge = 0.0;
+  double totalCost = 0.0;
   @override
   void initState() {
     // TODO: implement initState
@@ -53,6 +65,7 @@ class _FoodCartState extends State<FoodCart> {
         quantityItem[x] = int.parse(
             StorageUtil.getString("Cart_ItemQuantity_" + itemName[x]));
       }
+      totalCost = _calculateTotal();
     }
   }
 
@@ -61,7 +74,7 @@ class _FoodCartState extends State<FoodCart> {
     super.dispose();
   }
 
-  _cancelOrder() {
+  _resetOrder() {
     print("Erase all order items here");
     StorageUtil.putString("Cart_ItemName", "");
     StorageUtil.putString("Cart_ItemPrice", "");
@@ -93,7 +106,7 @@ class _FoodCartState extends State<FoodCart> {
             TextButton(
               child: Text('Yes'),
               onPressed: () {
-                _cancelOrder();
+                _resetOrder();
                 Navigator.of(context).pop();
               },
             ),
@@ -101,6 +114,78 @@ class _FoodCartState extends State<FoodCart> {
         );
       },
     );
+  }
+
+  Future<void> _confirmPayment() async {
+    BuildContext contextPayment;
+    // delayed code here
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        contextPayment = context;
+        return AlertDialog(
+          title: Text('Loading Payment'),
+          content: SingleChildScrollView(
+            child: LinearProgressIndicator(),
+          ),
+        );
+      },
+    );
+
+    new Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(contextPayment).pop();
+      _sendOrder();
+      print('Done order.');
+    });
+  }
+
+  Future<void> _sendOrder() async {
+    var jsonID = json.encode(itemID);
+    var jsonName = json.encode(itemName);
+    var jsonPrice = json.encode(itemPrice);
+    var jsonQuantity = json.encode(quantityItem);
+    print(jsonName);
+    //test data
+    userAddress = "Test Address 1";
+    paymentType = "Visa/Mastercard";
+    userID = "User123";
+    userPhone_Number = "920250508 ";
+    Map orderData = {
+      "Address": "$userAddress",
+      "ItemID_List": jsonID,
+      "Order_List": jsonName,
+      "Pay_Type": paymentType,
+      "Price_List": jsonPrice,
+      "Total_Price": totalCost,
+      "User_ID": userID,
+      "UserPhone_Number": userPhone_Number,
+      "Items_Quantity":jsonQuantity,
+    };
+    Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
+      print(
+          "Order Object has been updated in the database - ${updatedOrder['objectId']}");
+    });
+    setState(() {
+      _resetOrder();
+    });
+    print('Sent Order');
+   /*
+    ADMIN CODE
+    DataQueryBuilder queryBuilderContent2 = DataQueryBuilder();
+    new Future.delayed(const Duration(seconds: 5), () {
+       Backendless.data
+          .of("Live_Orders")
+          .find(queryBuilderContent2)
+          .then((changes) {
+            for(int x = 0; x<changes.length;x++){
+              Map itemJSON = changes[x]["ItemID_List"];
+              print("Order: ${changes[x]["objectId"]}");
+            }
+      });
+
+    });*/
+
   }
 
   _calculateTotal() {
@@ -117,23 +202,25 @@ class _FoodCartState extends State<FoodCart> {
     queryData = MediaQuery.of(context);
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xFFFAFAFA),
+          iconTheme: IconThemeData(
+            color: Colors.black, //change your color here
+          ),
+          backgroundColor: Colors.blueAccent[700],
           elevation: 0,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ///a little bit of space never hurts.
-              Container(
-                padding: const EdgeInsets.all(10),
-              ),
+
               Row(
                 children: [
                   Text(
-                    "Order",
+                    "Basket",
                     style: TextStyle(
-                        color: Color(0xFF3a3737),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 28),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 28,
+                        fontFamily: 'Merriweather'),
                     textAlign: TextAlign.center,
                   ),
                   Spacer(),
@@ -195,18 +282,20 @@ class _FoodCartState extends State<FoodCart> {
                           },
                         ),
                       ),
-
                       // PaymentMethodWidget(),
                     )
                   : Column(children: <Widget>[
                       Divider(),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                      ),
                       Card(
                         color: Colors.white,
                         elevation: 2,
                         child: Container(
                             padding: const EdgeInsets.all(10),
                             child: Text(
-                              "Order List is Empty",
+                              "Basket is Empty",
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -250,7 +339,9 @@ class _FoodCartState extends State<FoodCart> {
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.blue[600],
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            _confirmPayment();
+                          },
                           child: Container(
                             child: Text(
                               "Confirm Order",
@@ -275,10 +366,12 @@ class _FoodCartState extends State<FoodCart> {
                           text: [
                             "hungry?",
                             "don't be.",
-                            "Try our awesome offers. :D",
+                            "Try our awesome offers!",
                           ],
-                          textStyle:
-                              TextStyle(fontSize: 30.0, fontFamily: "Agne",color: Colors.black45),
+                          textStyle: TextStyle(
+                              fontSize: 30.0,
+                              fontFamily: "Agne",
+                              color: Colors.black45),
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -287,10 +380,6 @@ class _FoodCartState extends State<FoodCart> {
           ),
         ));
   }
-}
-
-double calculateTotalPrices() {
-  return 0.0;
 }
 
 class CartItem extends StatelessWidget {

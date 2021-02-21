@@ -8,7 +8,7 @@ import 'package:zomatoui/ui/profile/fifth.dart';
 import 'package:zomatoui/ui/delivery/first.dart';
 import 'package:zomatoui/ui/explore/fourth.dart';
 import 'package:zomatoui/ui/dinein/offers_page.dart';
-import 'package:zomatoui/ui/OrderFoodCart/OrderPayPage.dart';
+import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/widgets/widgets.dart';
 
 ///the table database
@@ -36,8 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       //EVERY TIME USER TAPS THE NAVIGATION BAR, IT CHANGES INDEX AND CHANGED PAGE
       _selectedIndex = index;
-      _pageController.animateToPage(index,
-          duration: Duration(milliseconds: 500), curve: Curves.easeOutSine);
+      _pageController.jumpToPage(_selectedIndex);
     });
   }
 
@@ -117,6 +116,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   _bodyDesign() {
     return    SafeArea(
         child: PageView(
+          physics:new NeverScrollableScrollPhysics(),
           controller: _pageController,
           onPageChanged: (index) {
             setState(() => _selectedIndex = index);

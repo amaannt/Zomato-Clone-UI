@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/constants/colors.dart';
+import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/ui/UIElements.dart';
-import 'package:zomatoui/ui/delivery/food.dart';
-import 'package:zomatoui/ui/delivery/FoodTwo.dart';
-import 'package:zomatoui/ui/delivery/FoodFour.dart';
-import 'package:zomatoui/ui/delivery/FoodThree.dart';
 import 'package:zomatoui/ui/delivery/FoodClass.dart';
 
 ///Backendless database backend
@@ -39,7 +37,13 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   Future<List<Widget>> myFuture;
 
   //Json Encoders
-  var JsonItemName, JsonFoodType, JsonAmount, JsonImage, JsonPrices, JsonDesc, JsonID;
+  var JsonItemName,
+      JsonFoodType,
+      JsonAmount,
+      JsonImage,
+      JsonPrices,
+      JsonDesc,
+      JsonID;
 
   //remove id from here
   String userID = "amaan2";
@@ -54,9 +58,13 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   ///fade effects controller
   AnimationController TabAnimcontroller;
   Animation animationFade;
+
+  ///appbar variable
+  Widget appbarWidget;
   @override
   void initState() {
     super.initState();
+    appbarWidget = _appBarBuilder();
 
     ///This is the UIElements Class widget area
     _topBar = new UIElements();
@@ -346,6 +354,38 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  _appBarBuilder() {
+    return PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false, // hides leading widget
+          flexibleSpace: new UIElements(),
+          title: Row(
+            children: [
+              Text(
+                "Pali Baba",
+                style: TextStyle(color: Colors.black),
+              ),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FoodCart()),
+                  );
+                },
+                child: Icon(
+                  FontAwesome.shopping_basket,
+                  size: 25,
+                  color: AppColors.primaryTextColorGrey,
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     try {
@@ -353,12 +393,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         //remove scaffolding if any future issues
         return Scaffold(
           ///APP BAR SUBJECT TO CHANGE
-          /*appBar: PreferredSize(
-              preferredSize: Size.fromHeight(78.0),
-              child: AppBar(
-                automaticallyImplyLeading: false, // hides leading widget
-                flexibleSpace: new UIElements(),
-              )),*/
+          appBar: appbarWidget,
+
           body: FutureBuilder(
               future: setItemContentOnline(),
               builder: (context, snapshot) {
@@ -374,13 +410,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
         return Scaffold(
 
             ///APPBAR SUBJECT TO CHANGE
-            /* appBar: PreferredSize(
-                preferredSize: Size.fromHeight(72.0),
-                child: AppBar(
-                  backgroundColor: Colors.white,
-                  automaticallyImplyLeading: false, // hides leading widget
-                  flexibleSpace: new UIElements(),
-                )),*/
+            ///
+            appBar: appbarWidget,
             body: TabMenu());
       }
     } catch (e) {
