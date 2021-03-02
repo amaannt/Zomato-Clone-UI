@@ -420,7 +420,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
           appJustOpened = true;
         });
       });
-      return Text("Loading Menu...");
+      return CircularProgressIndicator();
     }
   }
 }

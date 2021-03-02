@@ -294,6 +294,21 @@ class _FoodCartState extends State<FoodCart> {
     return total;
   }
 
+  incrementItemQuantity(int index, bool isAdd){
+   if( quantityItem[index] == 1){
+     isAdd?quantityItem[index] +=1 : quantityItem[index]=1;
+   } else {
+     isAdd?quantityItem[index] +=1 : quantityItem[index]-=1;
+   }
+
+
+   StorageUtil.putString("Cart_ItemQuantity_" + itemName[index], quantityItem[index].toString());
+
+    totalCost = _calculateTotal();
+    setState(() {
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
@@ -367,12 +382,23 @@ class _FoodCartState extends State<FoodCart> {
                               children: <Widget>[
                                 CartItem(
                                     productName: "${itemName[index]}",
+                                    index: index,
                                     productPrice: "€${itemPrice[index]}",
                                     productImage: "ic_popular_food_1",
                                     productCartQuantity: StorageUtil.getString(
                                         "Cart_ItemQuantity_" +
-                                            itemName[index])),
-                                (index < orderAmount - 1)
+                                            itemName[index])
+                                ),
+                                Row(children: <Widget>[
+
+                                  TextButton(onPressed: (){
+                                    incrementItemQuantity(index, false);}, child: Text("-"),),
+
+                                  TextButton(onPressed: (){
+                                    incrementItemQuantity(index, true);}, child: Text("+"),),
+
+                                ],),
+                                 (index < orderAmount - 1)
                                     ? Divider()
                                     : Container(),
                               ],
@@ -485,13 +511,14 @@ class CartItem extends StatelessWidget {
   String productPrice;
   String productImage;
   String productCartQuantity;
-
+  int index;
   CartItem({
     Key key,
     @required this.productName,
     @required this.productPrice,
     @required this.productImage,
     @required this.productCartQuantity,
+    @required this.index,
   }) : super(key: key);
 
   @override
@@ -575,14 +602,7 @@ class CartItem extends StatelessWidget {
                     SizedBox(
                       width: 40,
                     ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      child: Image.asset(
-                        "assets/images/placeholder/ImageIconFood.png",
-                        width: 25,
-                        height: 25,
-                      ),
-                    )
+
                   ],
                 ),
                 Container(

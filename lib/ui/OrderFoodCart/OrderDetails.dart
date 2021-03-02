@@ -23,6 +23,38 @@ class _OrderDetailState extends State<OrderDetails> {
     this.sizeOfList = widget.sizeOfList;
   }
 
+  Future<void> _showDeleteWarning() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+
+          content: SingleChildScrollView(
+            child: Text('Are you sure you want to delete this Order?'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            Spacer(),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                deleteActiveOrder(order.currentIndex);
+
+
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   deleteLastActiveOrderKeys() {
     ///delete last key since stack is reset
     StorageUtil.deleteKey("ActiveOrderIndex_" + (sizeOfList - 1).toString());
@@ -43,6 +75,7 @@ class _OrderDetailState extends State<OrderDetails> {
   }
 
   deleteActiveOrder(int key) {
+    Navigator.of(context).pop();
     try {
       if (key == 0 && sizeOfList == 1) {
         ///delete the one and only element of the orders
@@ -129,8 +162,8 @@ class _OrderDetailState extends State<OrderDetails> {
         ),
         TextButton(
             onPressed: () {
-              deleteActiveOrder(order.currentIndex);
-            },
+              _showDeleteWarning();
+              },
             child: Container(
               child: Text("Delete Order"),
             ))

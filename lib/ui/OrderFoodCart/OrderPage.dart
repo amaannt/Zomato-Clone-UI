@@ -110,11 +110,11 @@ class _OrderPageTabState extends State<OrderPageTab> {
           );
           if(result == "Successfully Removed!" ||result == "Error Occurred" ){
             showAlertDialog(context, result);
-
-            result = "";
-
-            Orders = getActiveOrders();
+            /// first get tbe size of the list
             getOrderListSize();
+            result = "";
+            /// next get the orders for the refresh
+            Orders = getActiveOrders();
             setState(() {
 
             });
