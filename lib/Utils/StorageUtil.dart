@@ -46,5 +46,11 @@ class StorageUtil {
     if (_preferences == null) return defValue;
     return _preferences.getInt(key) ?? defValue;
   }
+  static void deleteKey(String key){
+    _preferences.remove(key);
+  }
+  static getKeyPrefs(){
+    return _preferences.getKeys();
+  }
 
 }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:zomatoui/constants/colors.dart';
+import 'package:intl/intl.dart';
 
 class FoodCart extends StatefulWidget {
   @override
@@ -18,8 +18,9 @@ class _FoodCartState extends State<FoodCart> {
   String userID;
   String userAddress;
   String userPhone_Number;
-  String paymentStatus;
+  bool isPaymentDone;
   String paymentType;
+  String PaymentID = "";
 
   ///Item Information
   List<String> itemName;
@@ -132,11 +133,56 @@ class _FoodCartState extends State<FoodCart> {
         );
       },
     );
-
+    isPaymentDone = true;
+    //this will change either to a listener or something
     new Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(contextPayment).pop();
-      _sendOrder();
-      print('Done order.');
+      if (isPaymentDone) {
+        _sendOrder();
+        print('Done order.');
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            contextPayment = context;
+            return AlertDialog(
+              title: Text('Order Completed!'),
+              content: SingleChildScrollView(
+                child: Image.asset(
+                  "assets/images/greentickmark.png",
+                  width: 100,
+                ),
+              ),
+            );
+          },
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+
+      } else {
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            contextPayment = context;
+            return AlertDialog(
+              title: Text('Error In Payment'),
+              content: SingleChildScrollView(
+                child: Image.asset(
+                  "assets/images/errorpayment.png",
+                  width: 100,
+                ),
+              ),
+            );
+          },
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+      }
     });
   }
 
@@ -160,17 +206,70 @@ class _FoodCartState extends State<FoodCart> {
       "Total_Price": totalCost,
       "User_ID": userID,
       "UserPhone_Number": userPhone_Number,
-      "Items_Quantity":jsonQuantity,
+      "Items_Quantity": jsonQuantity,
     };
+
+    ///save order to local storage
+    int orderIndexInStorage = 0;
+    bool ActiveOrderSaved = false;
+    while (!ActiveOrderSaved) {
+      if (StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) == null ||
+          StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) =="") {
+        try {
+          StorageUtil.putString(
+              "ActiveOrder_" + orderIndexInStorage.toString(), "Order Active");
+          StorageUtil.putString(
+              "ActiveOrderAddress_" + orderIndexInStorage.toString(),
+              userAddress);
+          var now = new DateTime.now();
+          var formatter = new DateFormat('yyyy-MM-dd');
+          String formattedDate = formatter.format(now);
+          print(formattedDate); // 2016-01-25
+
+          StorageUtil.putString(
+              "ActiveOrderDate_" + orderIndexInStorage.toString(),
+              formattedDate.toString());
+          StorageUtil.putInt(
+              "ActiveOrderIndex_" + orderIndexInStorage.toString(),
+          orderIndexInStorage);
+          StorageUtil.putString(
+              "ActiveOrderItemIDList_" + orderIndexInStorage.toString(),
+              jsonID);
+          StorageUtil.putString(
+              "ActiveOrderItemNameList_" + orderIndexInStorage.toString(),
+              jsonName);
+          StorageUtil.putString(
+              "ActiveOrderPayMode_" + orderIndexInStorage.toString(),
+              paymentType);
+          StorageUtil.putString(
+              "ActiveOrderPriceList_" + orderIndexInStorage.toString(),
+              jsonPrice);
+          StorageUtil.putString(
+              "ActiveOrderTotalPrice_" + orderIndexInStorage.toString(),
+              totalCost.toString());
+          StorageUtil.putString(
+              "ActiveOrderQuantityList_" + orderIndexInStorage.toString(),
+              jsonQuantity);
+          ActiveOrderSaved = true;
+        } catch (e) {
+          ActiveOrderSaved = false;
+          orderIndexInStorage++;
+        }
+      } else {
+        orderIndexInStorage++;
+      }
+    }
+
+    ///
+    ///UPDATE LIVE ORDERS IN REALTIME DATABASE
     Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
-      print(
-          "Order Object has been updated in the database - ${updatedOrder['objectId']}");
+      print("Order Object has been updated in the database - ${updatedOrder['objectId']}");
     });
     setState(() {
       _resetOrder();
     });
     print('Sent Order');
-   /*
+    /*
     ADMIN CODE
     DataQueryBuilder queryBuilderContent2 = DataQueryBuilder();
     new Future.delayed(const Duration(seconds: 5), () {
@@ -185,7 +284,6 @@ class _FoodCartState extends State<FoodCart> {
       });
 
     });*/
-
   }
 
   _calculateTotal() {

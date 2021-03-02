@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/ui/UIElements.dart';
-import 'package:zomatoui/ui/delivery/FoodClass.dart';
+import 'package:zomatoui/ui/MenuDesign/FoodClass.dart';
 
 ///Backendless database backend
 import 'package:backendless_sdk/backendless_sdk.dart';

@@ -54,6 +54,9 @@ dependencies:
   #animated text
   animated_text_kit: ^3.1.0
 
+  #for date
+  intl: ^0.16.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,6 +73,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/placeholder/ImageIconFood.png
+    - assets/images/greentickmark.png
+    - assets/images/errorpayment.png
+    - assets/images/emptyplate.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

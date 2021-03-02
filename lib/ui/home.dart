@@ -3,9 +3,10 @@ import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:zomatoui/ui/OrderFoodCart/OrderPage.dart';
 import 'package:zomatoui/ui/UIElements.dart';
 import 'package:zomatoui/ui/profile/fifth.dart';
-import 'package:zomatoui/ui/delivery/first.dart';
+import 'package:zomatoui/ui/MenuDesign/first.dart';
 import 'package:zomatoui/ui/explore/fourth.dart';
 import 'package:zomatoui/ui/dinein/offers_page.dart';
 import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     OfferPage(),
     MenuPage(),
-    FoodCart(),
+    OrderPageTab(),
     FourthPage(),
     FifthPage(),
   ];
