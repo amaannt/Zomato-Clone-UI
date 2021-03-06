@@ -193,6 +193,7 @@ class _FoodCartState extends State<FoodCart> {
     var jsonQuantity = json.encode(quantityItem);
     print(jsonName);
     //test data
+    String OrderID = "";
     userAddress = "Test Address 1";
     paymentType = "Visa/Mastercard";
     userID = "User123";
@@ -208,7 +209,10 @@ class _FoodCartState extends State<FoodCart> {
       "UserPhone_Number": userPhone_Number,
       "Items_Quantity": jsonQuantity,
     };
-
+    Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
+      print("Order Object has been updated in the database - ${updatedOrder['objectId']}");
+      OrderID = updatedOrder["objectId"];
+    });
     ///save order to local storage
     int orderIndexInStorage = 0;
     bool ActiveOrderSaved = false;
@@ -216,6 +220,8 @@ class _FoodCartState extends State<FoodCart> {
       if (StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) == null ||
           StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) =="") {
         try {
+          StorageUtil.putString("ActiveOrderID_" + orderIndexInStorage.toString(), OrderID);
+          StorageUtil.putString("ActiveOrderStatus_"+ orderIndexInStorage.toString(),"Confirmation Pending");
           StorageUtil.putString(
               "ActiveOrder_" + orderIndexInStorage.toString(), "Order Active");
           StorageUtil.putString(
@@ -260,11 +266,7 @@ class _FoodCartState extends State<FoodCart> {
       }
     }
 
-    ///
-    ///UPDATE LIVE ORDERS IN REALTIME DATABASE
-    Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
-      print("Order Object has been updated in the database - ${updatedOrder['objectId']}");
-    });
+
     setState(() {
       _resetOrder();
     });

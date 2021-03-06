@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 
 import 'OrderDetails.dart';
+import 'package:zomatoui/ui/OrderFoodCart/PreviousOrder.dart';
 
 class OrderPageTab extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class OrderPageTab extends StatefulWidget {
 
 class _OrderPageTabState extends State<OrderPageTab> {
   String userID;
-  List Orders;
+  List<Order> Orders;
   int sizeOfList;
 
   String result;
@@ -23,15 +24,15 @@ class _OrderPageTabState extends State<OrderPageTab> {
 
     Orders = getActiveOrders();
     print("Order page orders loaded");
-
-
   }
-  showAlertDialog(BuildContext context , String textString) {
 
+  showAlertDialog(BuildContext context, String textString) {
     // set up the button
     Widget okButton = FlatButton(
       child: Text("OK"),
-      onPressed: () { Navigator.pop(context);},
+      onPressed: () {
+        Navigator.pop(context);
+      },
     );
 
     // set up the AlertDialog
@@ -50,6 +51,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
       },
     );
   }
+
   getOrderListSize() {
     sizeOfList = 0;
     while (
@@ -104,20 +106,24 @@ class _OrderPageTabState extends State<OrderPageTab> {
         trailing:
             Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
         onTap: () async {
-          result  = await Navigator.push(
+          result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => new OrderDetails(order: order, sizeOfList: sizeOfList,)),
+            MaterialPageRoute(
+                builder: (context) => new OrderDetails(
+                      order: order,
+                      sizeOfList: sizeOfList,
+                    )),
           );
-          if(result == "Successfully Removed!" ||result == "Error Occurred" ){
+          if (result == "Successfully Removed!" || result == "Error Occurred") {
             showAlertDialog(context, result);
+
             /// first get tbe size of the list
             getOrderListSize();
             result = "";
+
             /// next get the orders for the refresh
             Orders = getActiveOrders();
-            setState(() {
-
-            });
+            setState(() {});
           }
         },
       );
@@ -131,7 +137,6 @@ class _OrderPageTabState extends State<OrderPageTab> {
     }
     return second;
   }
-
 
   List<Order> getActiveOrders() {
     int x = 0;
@@ -156,6 +161,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
 
     for (x = 0; x < sizeOfList; x++) {
       orderList[x] = Order(
+          orderID: StorageUtil.getString("ActiveOrderID_" + x.toString()),
           currentIndex: StorageUtil.getInt("ActiveOrderIndex_" + x.toString()),
           orderDate: StorageUtil.getString("ActiveOrderDate_" + x.toString()),
           UserID: userID,
@@ -181,7 +187,10 @@ class _OrderPageTabState extends State<OrderPageTab> {
               shrinkWrap: true,
               itemCount: sizeOfList,
               itemBuilder: (BuildContext context, int index) {
-                return makeCard(Orders[(sizeOfList - 1) - index]);
+                if (Orders[sizeOfList - 1 - index] != "Completed")
+                  return makeCard(Orders[(sizeOfList - 1) - index]);
+                else
+                  return Container();
               },
             )
           : Column(
@@ -223,7 +232,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
   }
 
   ///Previous Orders
-  getPreviousOrdersList(){
+  getPreviousOrdersList() {
     return Text("Here lays the previous orders ");
   }
 
@@ -233,48 +242,56 @@ class _OrderPageTabState extends State<OrderPageTab> {
       appBar: AppBar(
         backgroundColor: Colors.black26,
         title: Center(
-          child: Text("Orders",
+          child: Text(
+            "Orders",
             style: TextStyle(
-            color: Colors.white,
-            fontSize:20,
-            fontWeight: FontWeight.bold,
-          ),),
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
       backgroundColor: Color.fromRGBO(255, 95, 54, 1),
       body: Column(children: <Widget>[
-        Divider(color: Colors.black26,),
+        Divider(
+          color: Colors.black26,
+        ),
         Container(
-          padding: const EdgeInsets.symmetric(vertical:3,horizontal: 10),
-          alignment:Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+          alignment: Alignment.centerLeft,
           child: Text(
-
             "Active orders",
             style: TextStyle(
               color: Colors.white70,
-              fontSize:15,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        Divider(color: Colors.black26,),
+        Divider(
+          color: Colors.black26,
+        ),
         getActiveOrderList(),
-        Divider(color: Colors.black26,),
+        Divider(
+          color: Colors.black26,
+        ),
         Container(
-          padding: const EdgeInsets.symmetric(vertical:3,horizontal: 10),
-          alignment:Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+          alignment: Alignment.centerLeft,
           child: Text(
-
             "Previous orders",
             style: TextStyle(
               color: Colors.white70,
-              fontSize:15,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        Divider(color: Colors.black26,),
-        getPreviousOrdersList(),
+        Divider(
+          color: Colors.black26,
+        ),
+        PreviousOrderState(),
       ]),
     );
   }
@@ -290,6 +307,8 @@ class Order {
   List<String> itemPrice;
   String modeOfPayment;
   List<String> itemID;
+  String orderStatus;
+
   List<String> quantityItem;
   double totalCost = 0.0;
   Order(
@@ -303,5 +322,8 @@ class Order {
       this.itemName,
       this.itemID,
       this.orderDate,
-      this.modeOfPayment});
+
+        this.orderStatus,
+      this.modeOfPayment
+      });
 }
