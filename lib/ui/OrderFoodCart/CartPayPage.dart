@@ -185,15 +185,15 @@ class _FoodCartState extends State<FoodCart> {
       }
     });
   }
-
+  String OrderID ="";
   Future<void> _sendOrder() async {
     var jsonID = json.encode(itemID);
     var jsonName = json.encode(itemName);
     var jsonPrice = json.encode(itemPrice);
     var jsonQuantity = json.encode(quantityItem);
     print(jsonName);
-    //test data
-    String OrderID = "";
+    //**************************************test data
+
     userAddress = "Test Address 1";
     paymentType = "Visa/Mastercard";
     userID = "User123";
@@ -209,9 +209,11 @@ class _FoodCartState extends State<FoodCart> {
       "UserPhone_Number": userPhone_Number,
       "Items_Quantity": jsonQuantity,
     };
-    Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
+    await Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
       print("Order Object has been updated in the database - ${updatedOrder['objectId']}");
-      OrderID = updatedOrder["objectId"];
+      
+
+      StorageUtil.putString("TempOrderID",updatedOrder["objectId"]);
     });
     ///save order to local storage
     int orderIndexInStorage = 0;
@@ -220,8 +222,12 @@ class _FoodCartState extends State<FoodCart> {
       if (StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) == null ||
           StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) =="") {
         try {
-          StorageUtil.putString("ActiveOrderID_" + orderIndexInStorage.toString(), OrderID);
+
+          StorageUtil.putString("ActiveOrderID_" + orderIndexInStorage.toString(), StorageUtil.getString("TempOrderID"));
+          print("The order ID that is svaefdedededede "+StorageUtil.getString("ActiveOrderID_"+ orderIndexInStorage.toString()));
+          StorageUtil.deleteKey("TempOrderID");
           StorageUtil.putString("ActiveOrderStatus_"+ orderIndexInStorage.toString(),"Confirmation Pending");
+          //need this to check the if condition we are running of this scope (if this is null only then we can save this as an active order in this index *we need this*)
           StorageUtil.putString(
               "ActiveOrder_" + orderIndexInStorage.toString(), "Order Active");
           StorageUtil.putString(

@@ -46,6 +46,8 @@ dependencies:
   cached_network_image: ^2.5.0
   #bottom bar transition
   bottom_bar_page_transition: ^1.0.3
+  # navigation bar
+
   #search bar
   flutter_search_bar: ^2.1.0
 
@@ -56,6 +58,8 @@ dependencies:
 
   #for date
   intl: ^0.16.1
+
+
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +80,19 @@ flutter:
     - assets/images/greentickmark.png
     - assets/images/errorpayment.png
     - assets/images/emptyplate.png
+    - assets/icons/Menu.png
+    - assets/icons/Offers.png
+    - assets/icons/Orders.png
+    - assets/icons/Profile.png
+    - assets/icons/OrdersActive.png
+    - assets/icons/OrdersActive - Copy.png
+    - assets/icons/ProfileActive.png
+    - assets/icons/ProfileActive - Copy.png
+    - assets/icons/OffersActive.png
+    - assets/icons/OffersActive - Copy.png
+    - assets/icons/MenuActive.png
+    - assets/icons/MenuActive - Copy.png
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

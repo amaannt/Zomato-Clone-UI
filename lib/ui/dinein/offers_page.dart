@@ -1,5 +1,7 @@
+import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/ui/dinein/dining.dart';
@@ -65,6 +67,17 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
         ));
   }
 
+   test() {
+    int x= 0;
+    /*while(StorageUtil.getString("ActiveOrder_" + x.toString()) != null &&StorageUtil.getString("ActiveOrder_" + x.toString()) != ""){
+
+        print(StorageUtil.getString("ActiveOrderStatus_3"));
+        x++;
+      }*/
+     print(StorageUtil.getKeyPrefs());
+    }
+
+
   @override
   Widget build(BuildContext context) {
     TabAnimcontroller.forward();
@@ -75,6 +88,12 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    test();
+                  },
+                  child: Container(child: Text("Save API MONEEEYYYSSSSS")),
+                ),
                 Container(
                     child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -82,7 +101,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Lockdown Specials',
+                        'Special Offers',
                         style: TextStyles.h1Heading,
                       ),
                       SizedBox(
@@ -171,10 +190,16 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                   ),
                 ),
                 Container(
+                    child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text("Promotional Offers",style: TextStyles.actionTitleBlack,),
+                )),
+                Container(
+                  height: 150.0,
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
                       children: <Widget>[
                         Column(
                           children: <Widget>[
@@ -182,8 +207,8 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(4.0),
                                 child: Image.network(
                                   'https://cdn.pixabay.com/photo/2015/12/08/00/26/food-1081707__480.jpg',
-                                  height: 80,
-                                  width: 80,
+                                  height: 100,
+                                  width: 140,
                                   fit: BoxFit.cover,
                                 )),
                             SizedBox(
@@ -192,14 +217,17 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                             Text('Burger')
                           ],
                         ),
+                        Container(
+                          width: 10,
+                        ),
                         Column(
                           children: <Widget>[
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(4.0),
                                 child: Image.network(
                                   'https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395__480.jpg',
-                                  height: 80,
-                                  width: 80,
+                                  height: 100,
+                                  width: 140,
                                   fit: BoxFit.cover,
                                 )),
                             SizedBox(
@@ -208,14 +236,17 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                             Text('Pizza')
                           ],
                         ),
+                        Container(
+                          width: 10,
+                        ),
                         Column(
                           children: <Widget>[
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(4.0),
                                 child: Image.network(
                                   'https://cdn.pixabay.com/photo/2018/08/16/23/06/ice-3611722_1280.jpg',
-                                  height: 80,
-                                  width: 80,
+                                  height: 100,
+                                  width: 140,
                                   fit: BoxFit.cover,
                                 )),
                             SizedBox(
@@ -224,14 +255,17 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                             Text('Sundae')
                           ],
                         ),
+                        Container(
+                          width: 10,
+                        ),
                         Column(
                           children: <Widget>[
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(4.0),
                                 child: Image.network(
                                   'https://www.eastcoastdaily.in/wp-content/uploads/2018/05/veg-paratha-1.png',
-                                  height: 80,
-                                  width: 80,
+                                  height: 100,
+                                  width: 140,
                                   fit: BoxFit.cover,
                                 )),
                             SizedBox(
@@ -239,6 +273,47 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                             ),
                             Text('Paratha')
                           ],
+                        ),
+                        Container(
+                          width: 10,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: Image.network(
+                                  'https://www.eastcoastdaily.in/wp-content/uploads/2018/05/veg-paratha-1.png',
+                                  height: 100,
+                                  width: 140,
+                                  fit: BoxFit.cover,
+                                )),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Text('Paratha')
+                          ],
+                        ),
+                        Container(
+                          width: 10,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: Image.network(
+                                  'https://www.eastcoastdaily.in/wp-content/uploads/2018/05/veg-paratha-1.png',
+                                  height: 100,
+                                  width: 140,
+                                  fit: BoxFit.cover,
+                                )),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Text('Paratha')
+                          ],
+                        ),
+                        Container(
+                          width: 10,
                         ),
                       ],
                     ),

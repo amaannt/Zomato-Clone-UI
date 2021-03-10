@@ -51,9 +51,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Backendless.setUrl("https://eu-api.backendless.com");
 
     Backendless.initApp(
-        "4CCACF64-55A7-6B67-FFC3-44558A179500",
-        "BB87A32F-17D7-4C50-A9E8-4D5AFA66D881",
-        "154EC8F4-6B07-43BD-BE2A-9E0C59DEDB18");
+        "FD3F0D07-3EE0-28F8-FF83-2B1BF0CCB200",
+        "D232A1BF-AD99-4943-A507-209F37031F68",
+        "11A5D221-5F27-4926-97F4-5D4EB9B01F33");
   }
 
   @override
@@ -69,30 +69,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       items: <BottomNavigationBarItem>[
 
         BottomNavigationBarItem(
-          icon: Icon(
-            Icons.stars_rounded, color: Colors.redAccent[700], size: 40,),
-          title: Text('Offers'),
+          icon: Image.asset("assets/icons/Offers.png",width: 60,),
+          activeIcon: Image.asset("assets/icons/OffersActive - Copy.png", width: 62), title: Container(),
         ),
         BottomNavigationBarItem(
-          icon: Icon(MaterialCommunityIcons.food_fork_drink,
-              color: Colors.yellowAccent[700]),
+          icon: Image.asset("assets/icons/Menu.png",width: 50,),
+          activeIcon: Image.asset("assets/icons/MenuActive - Copy.png", width: 45), title: Container(),
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset("assets/icons/Orders.png",width: 50,),
+          activeIcon: Image.asset("assets/icons/OrdersActive - Copy.png", width: 55), title: Container(),
 
-          title: Text('Menu'),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(FontAwesome.shopping_bag, color: Colors.blueGrey),
-          title: Text('Orders'),
-        ),
-        BottomNavigationBarItem(
+     /*   BottomNavigationBarItem(
           icon: Icon(SimpleLineIcons.exclamation, color: Colors.pink,),
           title: Text(
             'DELETE \n    Tab',
             style: TextStyle(fontStyle: FontStyle.italic, color: Colors.red),
           ),
-        ),
+        ),*/
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, color: Colors.lightGreen),
-          title: Text('Profile'),
+          icon: Image.asset("assets/icons/Profile.png",width: 50,),
+          activeIcon: Image.asset("assets/icons/ProfileActive - Copy.png", width: 45,color: Colors.deepOrange[500]), title: Container(),
         ),
       ],
       currentIndex: _selectedIndex,

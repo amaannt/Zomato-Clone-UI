@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
+import 'package:zomatoui/constants/colors.dart';
 
 import 'OrderPage.dart';
 
@@ -29,7 +31,6 @@ class _OrderDetailState extends State<OrderDetails> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-
           content: SingleChildScrollView(
             child: Text('Are you sure you want to delete this Order?'),
           ),
@@ -44,9 +45,7 @@ class _OrderDetailState extends State<OrderDetails> {
             TextButton(
               child: Text('Yes'),
               onPressed: () {
-                deleteActiveOrder(order.currentIndex);
-
-
+                deleteOrder(order.currentIndex, sizeOfList);
               },
             ),
           ],
@@ -54,120 +53,141 @@ class _OrderDetailState extends State<OrderDetails> {
       },
     );
   }
-
-  deleteLastActiveOrderKeys() {
+///****12 keys, don't forget****///
+  deleteLastOrderKeys(int size) {
     ///delete last key since stack is reset
-    StorageUtil.deleteKey("ActiveOrderIndex_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey("ActiveOrderDate_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey("ActiveOrder_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey("ActiveOrderAddress_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey(
-        "ActiveOrderItemIDList_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey(
-        "ActiveOrderItemNameList_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey("ActiveOrderPayMode_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey(
-        "ActiveOrderPriceList_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey(
-        "ActiveOrderTotalPrice_" + (sizeOfList - 1).toString());
-    StorageUtil.deleteKey(
-        "ActiveOrderQuantityList_" + (sizeOfList - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderIndex_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderDate_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrder_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderAddress_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderItemIDList_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderItemNameList_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderPayMode_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderPriceList_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderTotalPrice_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderQuantityList_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderID_" + (size - 1).toString());
+    StorageUtil.deleteKey("PreviousOrderStatus_" + (size - 1).toString());
   }
 
-  deleteActiveOrder(int key) {
+  deleteOrder(int key, int size) {
+    //if accessed from the details page
     Navigator.of(context).pop();
     try {
-      if (key == 0 && sizeOfList == 1) {
+      if (key == 0 && size == 1) {
         ///delete the one and only element of the orders
-        StorageUtil.deleteKey("ActiveOrderIndex_0");
-        StorageUtil.deleteKey("ActiveOrderDate_0");
-        StorageUtil.deleteKey("ActiveOrder_0");
-        StorageUtil.deleteKey("ActiveOrderAddress_0");
-        StorageUtil.deleteKey("ActiveOrderItemIDList_0");
-        StorageUtil.deleteKey("ActiveOrderItemNameList_0");
-        StorageUtil.deleteKey("ActiveOrderPayMode_0");
-        StorageUtil.deleteKey("ActiveOrderPriceList_0");
-        StorageUtil.deleteKey("ActiveOrderTotalPrice_0");
-        StorageUtil.deleteKey("ActiveOrderQuantityList_0");
-      } else if (key == sizeOfList - 1) {
-        deleteLastActiveOrderKeys();
+        StorageUtil.deleteKey("PreviousOrderIndex_0");
+        StorageUtil.deleteKey("PreviousOrderDate_0");
+        StorageUtil.deleteKey("PreviousOrder_0");
+        StorageUtil.deleteKey("PreviousOrderAddress_0");
+        StorageUtil.deleteKey("PreviousOrderItemIDList_0");
+        StorageUtil.deleteKey("PreviousOrderItemNameList_0");
+        StorageUtil.deleteKey("PreviousOrderPayMode_0");
+        StorageUtil.deleteKey("PreviousOrderPriceList_0");
+        StorageUtil.deleteKey("PreviousOrderTotalPrice_0");
+        StorageUtil.deleteKey("PreviousOrderQuantityList_0");
+        StorageUtil.deleteKey("PreviousOrderID_0");
+        StorageUtil.deleteKey("PreviousOrderStatus_0");
+      } else if (key == size - 1) {
+        deleteLastOrderKeys(size);
       } else {
         for (int orderIndexInStorage = key;
-            orderIndexInStorage < sizeOfList - 1;
-            orderIndexInStorage++) {
+        orderIndexInStorage < size - 1;
+        orderIndexInStorage++) {
           print("First pass" + orderIndexInStorage.toString());
           StorageUtil.putString(
-              "ActiveOrder_" + orderIndexInStorage.toString(),
+              "PreviousOrder_" + orderIndexInStorage.toString(),
               StorageUtil.getString(
-                  "ActiveOrder_" + (orderIndexInStorage + 1).toString()));
+                  "PreviousOrder_" + (orderIndexInStorage + 1).toString()));
           StorageUtil.putString(
-              "ActiveOrderAddress_" + orderIndexInStorage.toString(),
+              "PreviousOrderAddress_" + orderIndexInStorage.toString(),
               StorageUtil.getString(
-                  "ActiveOrderAddress" + (orderIndexInStorage + 1).toString()));
+                  "PreviousOrderAddress" + (orderIndexInStorage + 1).toString()));
           StorageUtil.putString(
-              "ActiveOrderDate_" + orderIndexInStorage.toString(),
+              "PreviousOrderDate_" + orderIndexInStorage.toString(),
               StorageUtil.getString(
-                  "ActiveOrderDate_" + (orderIndexInStorage + 1).toString()));
+                  "PreviousOrderDate_" + (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderItemIDList_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderItemIDList_" +
+              "PreviousOrderItemIDList_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderItemIDList_" +
                   (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderItemNameList_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderItemNameList_" +
+              "PreviousOrderItemNameList_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderItemNameList_" +
                   (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderPayMode_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderPayMode_" +
+              "PreviousOrderPayMode_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderPayMode_" +
                   (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderPriceList_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderPriceList_" +
+              "PreviousOrderPriceList_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderPriceList_" +
                   (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderTotalPrice_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderTotalPrice_" +
+              "PreviousOrderTotalPrice_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderTotalPrice_" +
                   (orderIndexInStorage + 1).toString()));
 
           StorageUtil.putString(
-              "ActiveOrderQuantityList_" + orderIndexInStorage.toString(),
-              StorageUtil.getString("ActiveOrderQuantityList_" +
+              "PreviousOrderQuantityList_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("PreviousOrderQuantityList_" +
                   (orderIndexInStorage + 1).toString()));
+          //order id list
+          StorageUtil.putString(
+              "PreviousOrderID_" + orderIndexInStorage.toString(),
+              StorageUtil.getString(
+                  "PreviousOrderID_" + (orderIndexInStorage + 1).toString()));
+          //order status
+          StorageUtil.putString(
+              "PreviousOrderStatus_" + orderIndexInStorage.toString(),
+              StorageUtil.getString(
+                  "PreviousOrderStatus_" + (orderIndexInStorage + 1).toString()));
           print("Second pass" + orderIndexInStorage.toString());
         }
 
-        deleteLastActiveOrderKeys();
+        deleteLastOrderKeys(size);
         //  print("Third pass: deleting last keys: " + (sizeOfList - 1).toString());
       }
+
+      //if accessed from OrderDetails Page
 
       ///refresh page to re initialize the list
       setState(() {
         Navigator.pop(context, "Successfully Removed!");
       });
+
     } catch (e) {
       Navigator.pop(context, "Error Occurred");
     }
   }
 
   retrieveOrderDetails() {
-    return Column(
-      children: [
-        Container(
-          child: Text("Sup mate this your orders"),
-        ),
-        TextButton(
-            onPressed: () {
-              _showDeleteWarning();
-              },
-            child: Container(
-              child: Text("Delete Order"),
-            ))
-      ],
+    return Flexible(
+      child: ListView.builder(
+          itemCount: order.itemName.length,
+          itemBuilder: (BuildContext context, int index) {
+            print(sizeOfList);
+            return Container(
+              height: 100,
+              child: Card(
+                child: new Column(
+                  children: [
+                    Container(
+                        child: Text(order.itemName[index].toString() +
+                            " x " +
+                            order.quantityItem[index] +
+                            "   \$" +
+                            order.itemPrice[index])),
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 
@@ -178,7 +198,46 @@ class _OrderDetailState extends State<OrderDetails> {
       appBar: AppBar(
         title: Text("Order Details"),
       ),
-      body: retrieveOrderDetails(),
+      body: Column(children: <Widget>[
+        Flexible(
+          child: Column(children: <Widget>[
+            retrieveOrderDetails(),
+            Card(
+              child: Text("Order Date: " + order.orderDate),
+            ),
+            Card(
+              child: Text("Total Price: " + order.totalCost.toString()),
+            ),
+          ]),
+        ),
+        Flexible(
+          child: order.orderStatus == "Delivered"
+              ? OutlineButton(
+                  highlightedBorderColor: AppColors.highlighterPink,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        EvilIcons.close_o,
+                        color: AppColors.highlighterPink,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      new Text(
+                        "Delete",
+                        style: TextStyle(color: AppColors.highlighterPink),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    _showDeleteWarning();
+                  },
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(5.0)))
+              : Container(child: Text("Rate us :)")), ///ADD A RATING OR REVIEW AREA OR SOMETHING
+        ),
+      ]),
     );
   }
 }
