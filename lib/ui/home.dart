@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zomatoui/Model/ListenerModel.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
@@ -54,6 +56,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         "FD3F0D07-3EE0-28F8-FF83-2B1BF0CCB200",
         "D232A1BF-AD99-4943-A507-209F37031F68",
         "11A5D221-5F27-4926-97F4-5D4EB9B01F33");
+
+    ///Start the listening service for orders
+    ListenOrderModel().createListen("User123");
   }
 
   @override
@@ -105,6 +110,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         bottomNavigationBar: _getBottomBar(),
         body: _bodyDesign(),

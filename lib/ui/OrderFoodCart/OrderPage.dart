@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zomatoui/Model/ListenerModel.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 
 import 'OrderDetails.dart';
@@ -38,7 +40,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
     super.initState();
 
     ///listen for order status changes
-    createListener();
+   // createListener();
 
     //get active order list size
     getOrderListSizes();
@@ -46,8 +48,56 @@ class _OrderPageTabState extends State<OrderPageTab> {
     activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
     previousOrders = getOrdersFromStorage(false, sizeOfHistoryList);
     print("Order page orders loaded");
+
+
   }
 
+  handleUpdates(){
+    if (updateStatus == "Delivered") {
+      // run through each active order
+      for (int x = 0; x < sizeOfActiveList; x++) {
+        print(StorageUtil.getString("ActiveOrderID_" + x.toString()));
+        //if the order matches then; store previous order, delete active order and reset the class object array with new size and content
+        if (updateOrderID ==
+            StorageUtil.getString("ActiveOrderID_" + x.toString())) {
+
+          //send x as the index of the order in both the storage and Order object index
+          //store active order as previous order
+          storePreviousOrder(x, updateStatus);
+          //delete active order when confirmed
+          deleteActiveOrder(x, sizeOfActiveList);
+          //get new sizes of both order types
+          getOrderListSizes();
+          //reset and initialize the order lists, with new sizes and orders
+          //getOrdersFromStorage(bool isActiveOrder, int sizeOfOrders)
+          activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
+          previousOrders = getOrdersFromStorage(false, sizeOfHistoryList);
+          /*setState(() {
+
+          });*/
+        }
+      }
+    }
+    else {
+
+      for (int x = 0; x < sizeOfActiveList; x++) {
+        //print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
+        if (updateOrderID ==
+            StorageUtil.getString("ActiveOrderID_" + x.toString())) {
+          //print("Found order and changed variables");
+
+          ///change storage content
+          StorageUtil.putString(
+              "ActiveOrderStatus_" + x.toString(), updateStatus);
+          ///change object content(list)
+          activeOrders[x].orderStatus = updateStatus;
+          activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
+         /* setState(() {});*/
+          break;
+        }
+      }
+    }
+  }
   ///Listen to Active order changes Specific to user account ID
   createListener() {
     bool isChanged = false;
@@ -87,21 +137,18 @@ class _OrderPageTabState extends State<OrderPageTab> {
       else {
 
         for (int x = 0; x < sizeOfActiveList; x++) {
-
-          print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
+          //print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
           if (updateOrderID ==
               StorageUtil.getString("ActiveOrderID_" + x.toString())) {
-            print("Found order and changed variables");
+            //print("Found order and changed variables");
+
             ///change storage content
             StorageUtil.putString(
                 "ActiveOrderStatus_" + x.toString(), updateStatus);
-
             ///change object content(list)
             activeOrders[x].orderStatus = updateStatus;
             activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
-            setState(() {
-
-            });
+            setState(() {});
             break;
           }
         }
@@ -546,6 +593,16 @@ class _OrderPageTabState extends State<OrderPageTab> {
 
   @override
   Widget build(BuildContext context) {
+
+    Provider.of<ListenOrderModel>(context).notifyChanges();
+    try{final messagePrint= Provider.of<ListenOrderModel>(context);
+    updateStatus = messagePrint.updateStatus;
+    updateOrderID = messagePrint.updateOrderID;
+    handleUpdates();}
+    catch(e){
+      return LinearProgressIndicator();
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black26,

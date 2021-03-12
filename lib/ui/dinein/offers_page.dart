@@ -33,7 +33,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    TabAnimcontroller.dispose();
+    //TabAnimcontroller.dispose();
   }
 
   appBarBuilder() {

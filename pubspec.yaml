@@ -59,6 +59,9 @@ dependencies:
   #for date
   intl: ^0.16.1
 
+  #for changenotifier
+  provider: ^4.3.3
+
 
 
 dev_dependencies:
