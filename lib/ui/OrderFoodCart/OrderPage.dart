@@ -4,6 +4,7 @@ import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zomatoui/Model/ListenerModel.dart';
+import 'package:zomatoui/Model/User.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 
 import 'OrderDetails.dart';
@@ -40,7 +41,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
     super.initState();
 
     ///listen for order status changes
-   // createListener();
+    // createListener();
 
     //get active order list size
     getOrderListSizes();
@@ -48,24 +49,21 @@ class _OrderPageTabState extends State<OrderPageTab> {
     activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
     previousOrders = getOrdersFromStorage(false, sizeOfHistoryList);
     print("Order page orders loaded");
-
-
   }
 
-  handleUpdates(){
+  handleUpdates() {
     if (updateStatus == "Delivered") {
-      // run through each active order
-      for (int x = 0; x < sizeOfActiveList; x++) {
-        print(StorageUtil.getString("ActiveOrderID_" + x.toString()));
+      // run through each Active order
+      for (int orderIndex = 0; orderIndex < sizeOfActiveList; orderIndex++) {
+        print(StorageUtil.getString("ActiveOrderID_" + orderIndex.toString()));
         //if the order matches then; store previous order, delete active order and reset the class object array with new size and content
         if (updateOrderID ==
-            StorageUtil.getString("ActiveOrderID_" + x.toString())) {
-
+            StorageUtil.getString("ActiveOrderID_" + orderIndex.toString())) {
           //send x as the index of the order in both the storage and Order object index
           //store active order as previous order
-          storePreviousOrder(x, updateStatus);
+          storePreviousOrder(orderIndex, updateStatus);
           //delete active order when confirmed
-          deleteActiveOrder(x, sizeOfActiveList);
+          deleteActiveOrder(orderIndex, sizeOfActiveList);
           //get new sizes of both order types
           getOrderListSizes();
           //reset and initialize the order lists, with new sizes and orders
@@ -77,85 +75,25 @@ class _OrderPageTabState extends State<OrderPageTab> {
           });*/
         }
       }
-    }
-    else {
-
-      for (int x = 0; x < sizeOfActiveList; x++) {
-        //print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
+    } else {
+      for (int orderIndex = 0; orderIndex < sizeOfActiveList; orderIndex++) {
+        ///Find the matching order
         if (updateOrderID ==
-            StorageUtil.getString("ActiveOrderID_" + x.toString())) {
+            StorageUtil.getString("ActiveOrderID_" + orderIndex.toString())) {
           //print("Found order and changed variables");
 
           ///change storage content
           StorageUtil.putString(
-              "ActiveOrderStatus_" + x.toString(), updateStatus);
+              "ActiveOrderStatus_" + orderIndex.toString(), updateStatus);
+
           ///change object content(list)
-          activeOrders[x].orderStatus = updateStatus;
+          activeOrders[orderIndex].orderStatus = updateStatus;
           activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
-         /* setState(() {});*/
+          /* setState(() {});*/
           break;
         }
       }
     }
-  }
-  ///Listen to Active order changes Specific to user account ID
-  createListener() {
-    bool isChanged = false;
-    EventHandler<Map> orderEventHandler =
-        Backendless.data.of("Live_Orders").rt();
-
-//have to insert socket.io for this listener
-    orderEventHandler.addUpdateListener((updatedOrder) {
-      print("An Order object has been updated. Object ID - ${updatedOrder}");
-      updateStatus = updatedOrder["Order_Status"].toString();
-      updateOrderID = updatedOrder["objectId"];
-      // change the active stored order as per the order status
-      if (updateStatus == "Delivered") {
-        // run through each active order
-        for (int x = 0; x < sizeOfActiveList; x++) {
-          print(StorageUtil.getString("ActiveOrderID_" + x.toString()));
-          //if the order matches then; store previous order, delete active order and reset the class object array with new size and content
-          if (updateOrderID ==
-              StorageUtil.getString("ActiveOrderID_" + x.toString())) {
-
-            //send x as the index of the order in both the storage and Order object index
-            //store active order as previous order
-            storePreviousOrder(x, updateStatus);
-            //delete active order when confirmed
-            deleteActiveOrder(x, sizeOfActiveList);
-            //get new sizes of both order types
-            getOrderListSizes();
-            //reset and initialize the order lists, with new sizes and orders
-            //getOrdersFromStorage(bool isActiveOrder, int sizeOfOrders)
-            activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
-            previousOrders = getOrdersFromStorage(false, sizeOfHistoryList);
-            setState(() {
-
-            });}
-        }
-      }
-      else {
-
-        for (int x = 0; x < sizeOfActiveList; x++) {
-          //print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
-          if (updateOrderID ==
-              StorageUtil.getString("ActiveOrderID_" + x.toString())) {
-            //print("Found order and changed variables");
-
-            ///change storage content
-            StorageUtil.putString(
-                "ActiveOrderStatus_" + x.toString(), updateStatus);
-            ///change object content(list)
-            activeOrders[x].orderStatus = updateStatus;
-            activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
-            setState(() {});
-            break;
-          }
-        }
-      }
-      // if the order isn't complete, just change the active order status
-      setState(() {});
-    }, whereClause: "User_ID =" + userID.toString());
   }
 
   ///Store Active order as a Previous Order, which makes it a part of the Order History
@@ -368,7 +306,6 @@ class _OrderPageTabState extends State<OrderPageTab> {
         elevation: 8.0,
         child: ClipPath(
           child: Container(
-
             height: 120,
             decoration: BoxDecoration(
                 color: Colors.black,
@@ -422,7 +359,9 @@ class _OrderPageTabState extends State<OrderPageTab> {
             MaterialPageRoute(
                 builder: (context) => new OrderDetails(
                       order: order,
-                      sizeOfList: order.orderStatus=="Delivered"?sizeOfHistoryList:sizeOfActiveList,
+                      sizeOfList: order.orderStatus == "Delivered"
+                          ? sizeOfHistoryList
+                          : sizeOfActiveList,
                     )),
           );
           if (result == "Successfully Removed!" || result == "Error Occurred") {
@@ -544,43 +483,38 @@ class _OrderPageTabState extends State<OrderPageTab> {
     try {
       return sizeOfHistoryList > 0
           ? ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: sizeOfHistoryList,
-        itemBuilder: (BuildContext context, int index) {
-
-            return makeCard(previousOrders[(sizeOfHistoryList - 1) - index]);
-
-        },
-      )
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: sizeOfHistoryList,
+              itemBuilder: (BuildContext context, int index) {
+                return makeCard(
+                    previousOrders[(sizeOfHistoryList - 1) - index]);
+              },
+            )
           : Column(
-        children: [
-          Container(
-            height: 50,
-          ),
-          Center(
-              child: Text(
-                "You have no Past Orders!",
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.white,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(5.0, 2.0),
-                      blurRadius: 7.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ],
+              children: [
+                Container(
+                  height: 50,
                 ),
-              )),
-          Center(
-            child: Image.asset(
-              "assets/images/emptyplate.png",
-              width: 250,
-            ),
-          ),
-        ],
-      );
+                Center(
+                    child: Text(
+                  "You have no Past Orders!\n",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                  ),
+                )),
+                Center(
+                  child: Icon(
+                    Icons.shopping_basket,
+                    size: 100,
+                  ), /*Image.asset(
+                    "assets/images/emptyplate.png",
+                    width: 250,
+                  ),*/
+                ),
+              ],
+            );
     } catch (e) {
       return Column(
         children: [
@@ -593,16 +527,22 @@ class _OrderPageTabState extends State<OrderPageTab> {
 
   @override
   Widget build(BuildContext context) {
+    ///Listens to change notifier with the backendless listener API
+    if(User().isLoggedIn) {
+      Provider.of<ListenOrderModel>(context).notifyChanges();
 
-    Provider.of<ListenOrderModel>(context).notifyChanges();
-    try{final messagePrint= Provider.of<ListenOrderModel>(context);
-    updateStatus = messagePrint.updateStatus;
-    updateOrderID = messagePrint.updateOrderID;
-    handleUpdates();}
-    catch(e){
-      return LinearProgressIndicator();
+      try {
+        ///Every time there is a change, the messagePrint variable receives the data from the change and applies it to the two variables
+        final messagePrint = Provider.of<ListenOrderModel>(context);
+        this.updateStatus = messagePrint.updateStatus;
+        this.updateOrderID = messagePrint.updateOrderID;
+
+        ///This function adds the variables to the current widget and refreshes them
+        handleUpdates();
+      } catch (e) {
+        return LinearProgressIndicator();
+      }
     }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black26,
@@ -618,50 +558,66 @@ class _OrderPageTabState extends State<OrderPageTab> {
         ),
       ),
       backgroundColor: Color.fromRGBO(255, 95, 54, 1),
-      body: ListView(
+      body: User().isLoggedIn
+          ? Container(
+              child: ListView(children: <Widget>[
+                Divider(
+                  color: Colors.black26,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Active orders",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black26,
+                ),
 
-          children: <Widget>[
-        Divider(
-          color: Colors.black26,
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Active orders",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
+                ///GETS THE ACTIVE ORDERS HERE
+                getActiveOrderList(),
+                Divider(
+                  color: Colors.black26,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Previous orders",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black26,
+                ),
+
+                ///GETS THE HISTORY OF ORDERS HERE
+                getPreviousOrderList(),
+              ]),
+            )
+          : Column(
+              children: [
+                Container(height: 100,),
+                Center(
+                  child: Text(
+                    "Please Login to view your orders",
+                    style: TextStyle(color: Colors.black38,fontSize: 18,fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
             ),
-          ),
-        ),
-        Divider(
-          color: Colors.black26,
-        ),
-        ///GETS THE ACTIVE ORDERS HERE
-        getActiveOrderList(),
-        Divider(
-          color: Colors.black26,
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Previous orders",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Divider(
-          color: Colors.black26,
-        ),
-        ///GETS THE HISTORY OF ORDERS HERE
-getPreviousOrderList(),
-      ]),
     );
   }
 }
@@ -694,3 +650,63 @@ class Order {
       this.orderStatus,
       this.modeOfPayment});
 }
+
+/* throw away code backup */
+
+///Listen to Active order changes Specific to user account ID
+
+///createListener() {
+//     bool isChanged = false;
+//     EventHandler<Map> orderEventHandler =
+//         Backendless.data.of("Live_Orders").rt();
+//
+// //have to insert socket.io for this listener
+//     orderEventHandler.addUpdateListener((updatedOrder) {
+//       print("An Order object has been updated. Object ID - ${updatedOrder}");
+//       updateStatus = updatedOrder["Order_Status"].toString();
+//       updateOrderID = updatedOrder["objectId"];
+//       // change the active stored order as per the order status
+//       if (updateStatus == "Delivered") {
+//         // run through each active order
+//         for (int x = 0; x < sizeOfActiveList; x++) {
+//           print(StorageUtil.getString("ActiveOrderID_" + x.toString()));
+//           //if the order matches then; store previous order, delete active order and reset the class object array with new size and content
+//           if (updateOrderID ==
+//               StorageUtil.getString("ActiveOrderID_" + x.toString())) {
+//             //send x as the index of the order in both the storage and Order object index
+//             //store active order as previous order
+//             storePreviousOrder(x, updateStatus);
+//             //delete active order when confirmed
+//             deleteActiveOrder(x, sizeOfActiveList);
+//             //get new sizes of both order types
+//             getOrderListSizes();
+//             //reset and initialize the order lists, with new sizes and orders
+//             //getOrdersFromStorage(bool isActiveOrder, int sizeOfOrders)
+//             activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
+//             previousOrders = getOrdersFromStorage(false, sizeOfHistoryList);
+//             setState(() {});
+//           }
+//         }
+//       } else {
+//         for (int x = 0; x < sizeOfActiveList; x++) {
+//           //print(updateOrderID+" and  "+StorageUtil.getString("ActiveOrderID_" + x.toString()));
+//           if (updateOrderID ==
+//               StorageUtil.getString("ActiveOrderID_" + x.toString())) {
+//             //print("Found order and changed variables");
+//
+//             ///change storage content
+//             StorageUtil.putString(
+//                 "ActiveOrderStatus_" + x.toString(), updateStatus);
+//
+//             ///change object content(list)
+//             activeOrders[x].orderStatus = updateStatus;
+//             activeOrders = getOrdersFromStorage(true, sizeOfActiveList);
+//             setState(() {});
+//             break;
+//           }
+//         }
+//       }
+//       // if the order isn't complete, just change the active order status
+//       setState(() {});
+//     }, whereClause: "User_ID =" + userID.toString());
+//   }

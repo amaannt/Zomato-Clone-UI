@@ -16,22 +16,27 @@ class ListenOrderModel extends ChangeNotifier{
   String updateOrderID="";
   //ListenOrderModel({this.userID});
   ///Listen to Active order changes Specific to user account ID
+  EventHandler<Map> orderEventHandler;
  void createListen(String userID) {
-    bool isChanged = false;
-    EventHandler<Map> orderEventHandler =
+    orderEventHandler =
     Backendless.data.of("Live_Orders").rt();
-
+    print("Starting Update Listener");
 //have to insert socket.io for this listener
     orderEventHandler.addUpdateListener((updatedOrder) {
-      print("An Order object has been updated. Object ID - ${updatedOrder}");
-      this.updateStatus = updatedOrder["Order_Status"].toString();
-      this.updateOrderID = updatedOrder["objectId"];
-       notifyChanges();
+      print("An Order object has been updated. Object ID - $updatedOrder");
+      if(updatedOrder["User_ID"] == userID) {
+        this.updateStatus = updatedOrder["Order_Status"].toString();
+        this.updateOrderID = updatedOrder["objectId"];
+        notifyChanges();
+      }
 
-
-    }, whereClause: "User_ID =" + userID.toString());
+    },);
   }
-  
+
+  deleteListener(){
+    orderEventHandler.removeUpdateListeners();
+
+  }
   Future <void> notifyChanges() async => Future.delayed(const Duration(seconds: 3), () {
       notifyListeners();
     });

@@ -62,7 +62,11 @@ dependencies:
   #for changenotifier
   provider: ^4.3.3
 
+  #progress indicator
+  flutter_spinkit: "^4.1.2"
 
+  # button
+  progress_state_button: "^1.0.2"
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +99,17 @@ flutter:
     - assets/icons/OffersActive - Copy.png
     - assets/icons/MenuActive.png
     - assets/icons/MenuActive - Copy.png
+
+    #other stuff
+    - assets/images/signupimages/ic_imslogo.png
+    - assets/images/signupimages/googlelogo.png
+    - assets/images/signupimages/fblogo.jpg
+    - assets/images/signupimages/twitterlogo.jpg
+    - assets/images/signupimages/ulogo.png
+    - assets/images/signupimages/ulogo.jpg
+    - assets/images/signupimages/login.png
+    - assets/images/signupimages/logo.png
+    - assets/images/signupimages/powered_by.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

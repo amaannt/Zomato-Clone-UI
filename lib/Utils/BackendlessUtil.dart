@@ -12,13 +12,11 @@ class BackendlessUtil {
   var updatesColumn = "", updatesRecord = "";
   createListenerColumn(String tableName, String column) {
     EventHandler<Map> orderEventHandler = Backendless.data.of(tableName).rt();
-    var updates;
+
 //have to insert socket.io for this listener
     orderEventHandler.addUpdateListener((updatedOrder) {
-      print("An Order object has been updated. Object ID - ${updatedOrder}");
+      //print("An Order object has been updated. Object ID - ${updatedOrder}");
       updatesColumn = updatedOrder[column].toString();
-
-      ;
     });
   }
 
@@ -27,7 +25,7 @@ class BackendlessUtil {
 
 //have to insert socket.io for this listener
     orderEventHandler.addUpdateListener((updatedOrder) {
-      print("An Order object has been updated. Object ID - ${updatedOrder}");
+      //print("An Order object has been updated. Object ID - ${updatedOrder}");
       updatesRecord = updatedOrder.toString();
     });
   }

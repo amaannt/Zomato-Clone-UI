@@ -4,6 +4,7 @@ import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/textstyles.dart';
 import 'package:zomatoui/ui/MenuDesign/ItemPopup.dart';
 
+// ignore: must_be_immutable
 class FoodClass extends StatefulWidget {
   String foodSectionName;
 
@@ -180,7 +181,7 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
                   onTap: () {
                     ItemPopupTab(itemNames[index], itemDescription[index],
                             itemID[index], itemPrices[index], itemImage[index])
-                        .PopupItem(context);
+                        .popupItem(context);
                   });
             }),
           ),
@@ -414,7 +415,7 @@ class _FoodClassState extends State<FoodClass> with TickerProviderStateMixin {
           future: loadItemList(),
           builder: (context, snapshot) {
             if (snapshot.data == null) {
-              return Center(child: CircularProgressIndicator());
+              return Container( width:100,child: CircularProgressIndicator());
             } else {
               try {
                 return makeItemList(snapshot);

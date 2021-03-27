@@ -4,6 +4,7 @@ import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:zomatoui/Model/User.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:intl/intl.dart';
@@ -160,7 +161,6 @@ class _FoodCartState extends State<FoodCart> {
           Navigator.pop(context);
           Navigator.pop(context);
         });
-
       } else {
         showDialog<void>(
           context: context,
@@ -185,7 +185,8 @@ class _FoodCartState extends State<FoodCart> {
       }
     });
   }
-  String OrderID ="";
+
+  String OrderID = "";
   Future<void> _sendOrder() async {
     var jsonID = json.encode(itemID);
     var jsonName = json.encode(itemName);
@@ -196,8 +197,8 @@ class _FoodCartState extends State<FoodCart> {
 
     userAddress = "Test Address 1";
     paymentType = "Visa/Mastercard";
-    userID = "User123";
-    userPhone_Number = "920250508 ";
+    userID = User().id;
+    userPhone_Number = User().phone;
     Map orderData = {
       "Address": "$userAddress",
       "ItemID_List": jsonID,
@@ -209,24 +210,37 @@ class _FoodCartState extends State<FoodCart> {
       "UserPhone_Number": userPhone_Number,
       "Items_Quantity": jsonQuantity,
     };
-    await Backendless.data.of("Live_Orders").save(orderData).then((updatedOrder) {
-      print("Order Object has been updated in the database - ${updatedOrder['objectId']}");
-      
+    await Backendless.data
+        .of("Live_Orders")
+        .save(orderData)
+        .then((updatedOrder) {
+      print(
+          "Order Object has been updated in the database - ${updatedOrder['objectId']}");
 
-      StorageUtil.putString("TempOrderID",updatedOrder["objectId"]);
+      StorageUtil.putString("TempOrderID", updatedOrder["objectId"]);
     });
+
     ///save order to local storage
     int orderIndexInStorage = 0;
     bool ActiveOrderSaved = false;
     while (!ActiveOrderSaved) {
-      if (StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) == null ||
-          StorageUtil.getString("ActiveOrder_" + orderIndexInStorage.toString()) =="") {
+      if (StorageUtil.getString(
+                  "ActiveOrder_" + orderIndexInStorage.toString()) ==
+              null ||
+          StorageUtil.getString(
+                  "ActiveOrder_" + orderIndexInStorage.toString()) ==
+              "") {
         try {
-
-          StorageUtil.putString("ActiveOrderID_" + orderIndexInStorage.toString(), StorageUtil.getString("TempOrderID"));
-          print("The order ID that is svaefdedededede "+StorageUtil.getString("ActiveOrderID_"+ orderIndexInStorage.toString()));
+          StorageUtil.putString(
+              "ActiveOrderID_" + orderIndexInStorage.toString(),
+              StorageUtil.getString("TempOrderID"));
+          print("The order ID that is svaefdedededede " +
+              StorageUtil.getString(
+                  "ActiveOrderID_" + orderIndexInStorage.toString()));
           StorageUtil.deleteKey("TempOrderID");
-          StorageUtil.putString("ActiveOrderStatus_"+ orderIndexInStorage.toString(),"Confirmation Pending");
+          StorageUtil.putString(
+              "ActiveOrderStatus_" + orderIndexInStorage.toString(),
+              "Confirmation Pending");
           //need this to check the if condition we are running of this scope (if this is null only then we can save this as an active order in this index *we need this*)
           StorageUtil.putString(
               "ActiveOrder_" + orderIndexInStorage.toString(), "Order Active");
@@ -243,7 +257,7 @@ class _FoodCartState extends State<FoodCart> {
               formattedDate.toString());
           StorageUtil.putInt(
               "ActiveOrderIndex_" + orderIndexInStorage.toString(),
-          orderIndexInStorage);
+              orderIndexInStorage);
           StorageUtil.putString(
               "ActiveOrderItemIDList_" + orderIndexInStorage.toString(),
               jsonID);
@@ -271,7 +285,6 @@ class _FoodCartState extends State<FoodCart> {
         orderIndexInStorage++;
       }
     }
-
 
     setState(() {
       _resetOrder();
@@ -302,21 +315,20 @@ class _FoodCartState extends State<FoodCart> {
     return total;
   }
 
-  incrementItemQuantity(int index, bool isAdd){
-   if( quantityItem[index] == 1){
-     isAdd?quantityItem[index] +=1 : quantityItem[index]=1;
-   } else {
-     isAdd?quantityItem[index] +=1 : quantityItem[index]-=1;
-   }
+  incrementItemQuantity(int index, bool isAdd) {
+    if (quantityItem[index] == 1) {
+      isAdd ? quantityItem[index] += 1 : quantityItem[index] = 1;
+    } else {
+      isAdd ? quantityItem[index] += 1 : quantityItem[index] -= 1;
+    }
 
-
-   StorageUtil.putString("Cart_ItemQuantity_" + itemName[index], quantityItem[index].toString());
+    StorageUtil.putString(
+        "Cart_ItemQuantity_" + itemName[index], quantityItem[index].toString());
 
     totalCost = _calculateTotal();
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
@@ -395,18 +407,24 @@ class _FoodCartState extends State<FoodCart> {
                                     productImage: "ic_popular_food_1",
                                     productCartQuantity: StorageUtil.getString(
                                         "Cart_ItemQuantity_" +
-                                            itemName[index])
+                                            itemName[index])),
+                                Row(
+                                  children: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        incrementItemQuantity(index, false);
+                                      },
+                                      child: Text("-"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        incrementItemQuantity(index, true);
+                                      },
+                                      child: Text("+"),
+                                    ),
+                                  ],
                                 ),
-                                Row(children: <Widget>[
-
-                                  TextButton(onPressed: (){
-                                    incrementItemQuantity(index, false);}, child: Text("-"),),
-
-                                  TextButton(onPressed: (){
-                                    incrementItemQuantity(index, true);}, child: Text("+"),),
-
-                                ],),
-                                 (index < orderAmount - 1)
+                                (index < orderAmount - 1)
                                     ? Divider()
                                     : Container(),
                               ],
@@ -443,22 +461,17 @@ class _FoodCartState extends State<FoodCart> {
                   ? Container(
                       padding: EdgeInsets.all(15),
                       child: Card(
-                          color: Colors.white54,
-                          elevation: 2,
-                          shape: BeveledRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            side: BorderSide(
-                              color: Colors.black,
-                              width: 0.2,
-                            ),
+                        color: Colors.white54,
+                        elevation: 2,
+                        shape: BeveledRectangleBorder(
+                          borderRadius: BorderRadius.circular(3.0),
+                          side: BorderSide(
+                            color: Colors.black26,
+                            width: 0.2,
                           ),
-                          child: CartItem(
-                              productName: "Total Price:",
-                              productPrice: "€" +
-                                  _calculateTotal().toString() +
-                                  " (Plus tax)",
-                              productImage: "",
-                              productCartQuantity: "")),
+                        ),
+                        child: totalDisplay(_calculateTotal()),
+                      ),
                     )
                   : Container(),
 
@@ -511,6 +524,90 @@ class _FoodCartState extends State<FoodCart> {
             ],
           ),
         ));
+  }
+
+  totalDisplay(double total) {
+    return Container(
+      width: double.infinity,
+      height: 130,
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Colors.white70,
+          spreadRadius: 1,
+          blurRadius: 1,
+          offset: Offset(0, 1),
+        ),
+      ]),
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Center(
+                    child: Image.asset(
+                  "assets/images/placeholder/ImageIconFood.png",
+                  width: 110,
+                  height: 100,
+                )),
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          child: Text(
+                            "Total Price:",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.w400),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          child: Text(
+                            "€" + total.toString() + " (Plus VAT)",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Color(0xFF3a3a3b),
+                                fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 40,
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 20),
+                  alignment: Alignment.centerRight,
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -610,7 +707,6 @@ class CartItem extends StatelessWidget {
                     SizedBox(
                       width: 40,
                     ),
-
                   ],
                 ),
                 Container(

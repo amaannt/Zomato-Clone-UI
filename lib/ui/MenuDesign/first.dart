@@ -8,6 +8,9 @@ import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/ui/UIElements.dart';
 import 'package:zomatoui/ui/MenuDesign/FoodClass.dart';
 
+///Progress indicator designs
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 ///Backendless database backend
 import 'package:backendless_sdk/backendless_sdk.dart';
 //encoding the json
@@ -35,6 +38,24 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   List<String> itemDescription;
   int amountOfItemContents = 0;
   Future<List<Widget>> myFuture;
+  final spinkit1 = SpinKitFadingGrid(
+    itemBuilder: (BuildContext context, int index) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: index.isEven ? Colors.red : Colors.green,
+        ),
+      );
+    },
+  );
+  final spinkit2 = SpinKitFadingCircle(
+    itemBuilder: (BuildContext context, int index) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: index.isEven ? Colors.red : Colors.green,
+        ),
+      );
+    },
+  );
 
   //Json Encoders
   var JsonItemName,
@@ -320,7 +341,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                 future: FoodClassObjectsFromServer(),
                 builder: (context, snapshot) {
                   if (snapshot.data == null) {
-                    return Center(child: CircularProgressIndicator());
+                    return Container(
+                        width: 100, child: spinkit2);
                   } else {
                     try {
                       return Expanded(
@@ -332,7 +354,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                       );
                     } catch (e) {
                       print(e);
-                      return Center(child: CircularProgressIndicator());
+                      return Container(
+                          width: 100, child: CircularProgressIndicator());
                     }
                   }
                 })
@@ -399,7 +422,10 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
               future: setItemContentOnline(),
               builder: (context, snapshot) {
                 if (snapshot.data == null) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: Container(
+                        width: 50, child: spinkit1),
+                  );
                 } else {
                   return TabMenu();
                 }
@@ -420,7 +446,11 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
           appJustOpened = true;
         });
       });
-      return CircularProgressIndicator();
+      return Center(
+          child: Container(
+              width: 10,
+                child: spinkit2,
+              ));
     }
   }
 }

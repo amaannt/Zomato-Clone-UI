@@ -2,19 +2,21 @@ import 'dart:convert';
 
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 
 class ItemPopupTab {
   String itemID;
-  String ItemName;
-  String ItemDescription;
+  String itemName;
+  String itemDescription;
   String itemPrice;
   String itemImage;
 
   ItemPopupTab(String itemName, String itemDesc, String itemID,
       String itemPrice, String itemIMG) {
-    this.ItemName = itemName;
-    this.ItemDescription = itemDesc;
+    this.itemName = itemName;
+    this.itemDescription = itemDesc;
     this.itemID = itemID;
     this.itemPrice = itemPrice;
     this.itemImage = itemIMG;
@@ -22,7 +24,7 @@ class ItemPopupTab {
 
   ///convert string from the storage to list
   ///this is working
-  convertAndAddToList(String firstPartOfString, String Item) {
+  convertAndAddToList(String firstPartOfString, String item) {
     var imgs = json.decode(StorageUtil.getString(firstPartOfString));
 
     //print(imgs.toString());
@@ -31,7 +33,7 @@ class ItemPopupTab {
       if (imgs[x] != null) second[x] = (imgs[x]);
     }
     //add the last element
-    second[imgs.length] = Item;
+    second[imgs.length] = item;
     return second;
   }
 
@@ -47,15 +49,16 @@ class ItemPopupTab {
     }
     return isExist;
   }
-  ConfirmOrder(BuildContext context) {
+  confirmOrder(BuildContext context) {
     print("Ordered");
+   
     //if there is nothing at all in the orders
     if (StorageUtil.getString("Cart_ItemName") == null ||
         StorageUtil.getString("Cart_ItemName") == "") {
       var jsonID = json.encode([itemID]);
       StorageUtil.putString("Cart_ItemID", jsonID);
 
-      var jsonName = json.encode([ItemName]);
+      var jsonName = json.encode([itemName]);
       StorageUtil.putString("Cart_ItemName", jsonName);
 
       var jsonPrice = json.encode([itemPrice]);
@@ -65,21 +68,21 @@ class ItemPopupTab {
       StorageUtil.putString("Cart_ItemImage", jsonIMG);
 
       //this line puts the preexisting items value as one and resets any other value previously
-      StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "1");
+      StorageUtil.putString("Cart_ItemQuantity_" + itemName, "1");
     } else {
 
       //check if item exists
-      if(orderExistsInList(ItemName)){
+      if(orderExistsInList(itemName)){
 
-        int quantityOfItem = int.parse(StorageUtil.getString("Cart_ItemQuantity_" + ItemName));
+        int quantityOfItem = int.parse(StorageUtil.getString("Cart_ItemQuantity_" + itemName));
         quantityOfItem +=1;
-        StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "$quantityOfItem");
+        StorageUtil.putString("Cart_ItemQuantity_" + itemName, "$quantityOfItem");
       } else{
         print("Order Present");
         //convert storage string to list
         //add new item to list
         List<String> itemI = convertAndAddToList("Cart_ItemID", itemID);
-        List<String> itemNm = convertAndAddToList("Cart_ItemName", ItemName);
+        List<String> itemNm = convertAndAddToList("Cart_ItemName", itemName);
         List<String> itemP = convertAndAddToList("Cart_ItemPrice", itemPrice);
         List<String> itemIMG = convertAndAddToList("Cart_ItemImage", itemImage);
 
@@ -92,7 +95,7 @@ class ItemPopupTab {
         StorageUtil.putString("Cart_ItemPrice", jsonPrice);
         var jsonIMG = json.encode(itemIMG);
         StorageUtil.putString("Cart_ItemImage", jsonIMG);
-        StorageUtil.putString("Cart_ItemQuantity_" + ItemName, "1");
+        StorageUtil.putString("Cart_ItemQuantity_" + itemName, "1");
       }
 
     }
@@ -103,7 +106,7 @@ class ItemPopupTab {
       messageText: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(ItemName,
+          Text(itemName,
               textAlign: TextAlign.center,
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -123,8 +126,8 @@ class ItemPopupTab {
   }
 
   AnimationController anim1;
-  PopupItem(BuildContext context) {
-    final popup = showModalBottomSheet(
+  popupItem(BuildContext context) {
+     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
           return Container(
@@ -145,23 +148,42 @@ class ItemPopupTab {
                 ],
               ),
               Text(
-                ItemName,
+                itemName,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                 child: RichText(
                   text: TextSpan(
-                    text: ItemDescription,
+                    text: itemDescription,
                     style: DefaultTextStyle.of(context).style,
                   ),
                 ),
               ),
-              FlatButton(
+              ProgressButton.icon(iconedButtons: {
+                ButtonState.idle: IconedButton(
+                    text: "Order",
+                    icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.white),
+                    color: Colors.deepPurple.shade500),
+                ButtonState.loading: IconedButton(
+                    text: "Loading", color: Colors.deepPurple.shade700),
+                ButtonState.fail: IconedButton(
+                    text: "Failed",
+                    icon: Icon(Icons.cancel, color: Colors.white),
+                    color: Colors.red.shade300),
+                ButtonState.success: IconedButton(
+                    text: "Success",
+                    icon: Icon(
+                      Icons.check_circle,
+                      color: Colors.white,
+                    ),
+                    color: Colors.green.shade400)
+              }, onPressed: () {var x = confirmOrder(context);}, state: ButtonState.idle),
+              TextButton(
                   onPressed: () {
-                    ConfirmOrder(context);
+                    confirmOrder(context);
                   },
-                  child: Icon(Icons.add_shopping_cart))
+                  child: Card(child: Container(height:40,child: Icon(Icons.add_shopping_cart))))
             ]),
           );
         });

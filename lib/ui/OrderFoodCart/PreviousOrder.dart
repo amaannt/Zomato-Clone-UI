@@ -22,18 +22,6 @@ class _PreviousOrderState extends State<PreviousOrderState> {
 //    createListener();
   }
 
-  createListener() {
-    EventHandler<Map> orderEventHandler =
-        Backendless.data.of("Live_Orders").rt();
-
-//have to insert socket.io for this listener
-    orderEventHandler.addUpdateListener((updatedOrder) {
-      print("An Order object has been updated. Object ID - ${updatedOrder}");
-      updates = updatedOrder["User_ID"].toString();
-      setState(() {});
-      isRefresh = true;
-    });
-  }
 
   Future<String> orderPanels() async {
     return updates;

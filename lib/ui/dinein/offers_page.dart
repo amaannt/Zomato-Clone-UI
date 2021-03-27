@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
 import 'package:zomatoui/ui/dinein/dining.dart';
 import 'package:zomatoui/ui/dinein/nightlife.dart';
 import 'package:zomatoui/constants/textstyles.dart';
+
 
 class OfferPage extends StatefulWidget {
   @override
@@ -19,6 +23,14 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
   AnimationController TabAnimcontroller;
   Animation animationFade;
   Widget _appBarBuilder;
+
+  connectionAchieve()async{
+
+
+  }
+  _getUserApi()  {
+
+  }
   @override
   void initState() {
     super.initState();
@@ -90,7 +102,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
-                    test();
+                    //test();
                   },
                   child: Container(child: Text("Save API MONEEEYYYSSSSS")),
                 ),
@@ -319,6 +331,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
+            Container(child:  _getUserApi(),),
               ])),
     );
   }

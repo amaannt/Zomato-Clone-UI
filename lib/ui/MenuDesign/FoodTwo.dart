@@ -10,8 +10,6 @@ class FoodTwoTab extends StatefulWidget {
 }
 
 class _FoodTwoTabState extends State<FoodTwoTab> {
-  @override
-  double rating = 3.5;
   double heightItem = 195;
   int amountOfItems = 32;
   int numOfColumns = 2;
