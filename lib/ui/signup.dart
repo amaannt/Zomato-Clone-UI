@@ -317,8 +317,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
          isSuccess = await User().userRegistration(fname.text, Sname.text, email.text, phoneNo.text, pass1.text);
          if(isSuccess){
            var thisUser = await Backendless.userService.currentUser();
-
-           print("User with email:" + thisUser.email + " registered with ID:" + thisUser.getProperty("objectId"));
+            try{
+           print("User with email:" + thisUser.email + " registered with ID:" + thisUser.getProperty("objectId"));}catch(e){}
             User().id = thisUser.getProperty("objectId");
             User().fname = fname.text;
             User().lastName = Sname.text;

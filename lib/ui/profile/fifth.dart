@@ -6,6 +6,7 @@ import 'package:zomatoui/Model/User.dart';
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/constants/constants.dart';
 import 'package:zomatoui/constants/textstyles.dart';
+import 'package:zomatoui/ui/profile/EditAccountDetailsPage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -79,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           TextButton(
                             onPressed: () {
                               ///profile details page
+                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>EditAccountDetailsPage()));
                             },
                             child: Text(
                               'Edit Account Details',

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:backendless_sdk/backendless_sdk.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -8,6 +9,7 @@ import 'package:zomatoui/Model/User.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:intl/intl.dart';
+import 'package:zomatoui/constants/constants.dart';
 
 class FoodCart extends StatefulWidget {
   @override
@@ -481,15 +483,29 @@ class _FoodCartState extends State<FoodCart> {
                       height: 60,
                       width: queryData.size.width * 0.9,
                       child: TextButton(
+                        
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.blue[600],
                           ),
                           onPressed: () {
-                            _confirmPayment();
+                            if(User().isLoggedIn){
+                              _confirmPayment();
+                            } else{
+                              navigateToSignIn();
+                              Flushbar(
+                                backgroundColor: Colors.red[900],
+                                title:  "      Please Login to Continue..",
+                                message:  " ",
+
+                                duration:  Duration(seconds: 3),
+                              )..show(context);
+                            }
+                           
                           },
                           child: Container(
                             child: Text(
-                              "Confirm Order",
+                              User().isLoggedIn
+                              ?"Confirm Order":"Login to Complete Order",
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
@@ -525,7 +541,9 @@ class _FoodCartState extends State<FoodCart> {
           ),
         ));
   }
-
+navigateToSignIn() async{
+  Navigator.popAndPushNamed(context,SIGN_IN);
+}
   totalDisplay(double total) {
     return Container(
       width: double.infinity,

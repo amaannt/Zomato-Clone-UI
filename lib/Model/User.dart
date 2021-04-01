@@ -1,5 +1,6 @@
 import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:zomatoui/Utils/LanguageController.dart';
+
 class User {
   String id;
   String email;
@@ -12,7 +13,7 @@ class User {
   String wordPass;
   String accountType;
   bool isLoggedIn = false;
-
+  bool isPhoneVerified = false;
   static final User _user = User._internal();
 
   factory User() {
@@ -41,23 +42,34 @@ class User {
     this.phone = mapData['phone'];
   }
 
-  userRegistration(String regFirstName, String regLastName, String emailId, String phoneNo,
-      String pass) async {
+  userRegistration(String regFirstName, String regLastName, String emailId,
+      String phoneNo, String pass) async {
+    //CHECK IF USER EXISTS
+
     BackendlessUser bkU = new BackendlessUser();
     bkU.email = emailId;
     bkU.password = pass;
     bkU.setProperty("First_Name", regFirstName);
     bkU.setProperty("Last_Name", regLastName);
     bkU.setProperty("phone", phoneNo);
-    bkU.setProperty("languageSelected", LanguageInformation().getActiveLanguage());
+    bkU.setProperty(
+        "languageSelected", LanguageInformation().getActiveLanguage());
 
     var responseMessage;
     try {
       responseMessage = await Backendless.userService.register(bkU);
       print(responseMessage);
+
       return true;
     } catch (e) {
       print(responseMessage);
     }
+  }
+
+  Future<bool> userPhoneConfirmation(String phoneNo) async {
+    //function to confirm verify phone number
+    new Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
+      return true;
+    });
   }
 }
