@@ -37,7 +37,7 @@ dependencies:
 #  cloud_firestore: "^0.16.0"
 #  firebase_database: "^6.0.0"
   #backendless
-  backendless_sdk: ^1.0.0
+  backendless_sdk: ^6.0.0
   #waiting for loading widgets
   async: ^2.4.2
 #storing and caching

@@ -14,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isLoggingOut = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,10 +40,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.of(context).pushNamed(SIGN_IN);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(vertical:4, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                 color: Colors.lightGreen,
-
-                child: Text("Login", style: TextStyle(color: Colors.white),),
+                child: Text(
+                  "Login",
+                  style: TextStyle(color: Colors.white),
+                ),
               )),
           Divider(),
           TextButton(
@@ -50,162 +53,201 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.of(context).pushNamed(SIGN_UP);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(vertical:4, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                 color: Colors.lightBlue,
-
-                child: Text("Register", style: TextStyle(color: Colors.white),),
+                child: Text(
+                  "Register",
+                  style: TextStyle(color: Colors.white),
+                ),
               )),
         ],
       ));
     } else {
-      return SingleChildScrollView(
-        child: Container(
-          color: AppColors.whiteColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ListTile(
-                  title: Text(
-                    User().displayName==null?"errorName":User().displayName,
-                    style: TextStyles.pageHeading,
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(User().email==null?"errorEmail":User().email),
-                      Row(
-                        children: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              ///profile details page
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>EditAccountDetailsPage()));
-                            },
-                            child: Text(
-                              'Edit Account Details',
-                              style: TextStyle(
-                                color: AppColors.highlighterPink,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_right,
-                            color: AppColors.highlighterPink,
-                          )
-                        ],
+      return Scaffold(
+          body: isLoggingOut == true
+              ? Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Center(
+                    child: Column(children: <Widget>[
+                      SizedBox(
+                        height: 200,
                       ),
-                    ],
-                  ),
-                  isThreeLine: true,
-                ),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Icon(
-                          Feather.shopping_bag,
-                          color: AppColors.blackColor,
+                      Text("Logging Out"),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                          width: 90,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Colors.red,
+                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.red[800]),
+                          ))
+                    ]),
+                  ))
+              : SingleChildScrollView(
+                  child: Container(
+                    color: AppColors.whiteColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: AbsorbPointer(
+                        absorbing: isLoggingOut,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                  User().displayName == null
+                                      ? "errorName"
+                                      : User().displayName,
+                                  style: TextStyles.pageHeading,
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(User().email == null
+                                        ? "errorEmail"
+                                        : User().email),
+                                    Row(
+                                      children: <Widget>[
+                                        TextButton(
+                                          onPressed: () async {
+                                            ///profile details page
+                                            var result = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        EditAccountDetailsPage()));
+                                            if (result == true) {
+                                              setState(() {});
+                                            }
+                                          },
+                                          child: Text(
+                                            'Edit Account Details',
+                                            style: TextStyle(
+                                              color: AppColors.highlighterPink,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_right,
+                                          color: AppColors.highlighterPink,
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                isThreeLine: true,
+                              ),
+                              Divider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Feather.shopping_bag,
+                                        color: AppColors.blackColor,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text('Your Orders')
+                                    ],
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(Icons.payment),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text('Payments')
+                                    ],
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(Feather.settings),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text('Settings')
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Divider(),
+                              Text(
+                                'Food Orders',
+                                style: TextStyles.actionTitleBlack,
+                              ),
+                              ListTile(
+                                leading: Icon(
+                                  Feather.shopping_bag,
+                                  color: AppColors.blackColor,
+                                ),
+                                title: Text(
+                                  'Your Orders',
+                                  style: TextStyles.highlighterTwo,
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                              ),
+                              Divider(),
+                              ListTile(
+                                title: Text(
+                                  'Send Feedback',
+                                  style: TextStyles.highlighterTwo,
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  'Report a Safety Emergency',
+                                  style: TextStyles.highlighterTwo,
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  'Rate us on the Play Store',
+                                  style: TextStyles.highlighterTwo,
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  'About',
+                                  style: TextStyles.highlighterTwo,
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoggingOut = true;
+                                  });
+                                  await User().logoutProcess();
+                                  setState(() {
+                                    isLoggingOut = false;
+                                  });
+                                  //log out procedure
+                                },
+                                child: ListTile(
+                                  title: Text(
+                                    'Log Out',
+                                    style: TextStyles.highlighterTwo,
+                                  ),
+                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text('Your Orders')
-                      ],
+                      ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        Icon(Icons.payment),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text('Payments')
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Icon(Feather.settings),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text('Settings')
-                      ],
-                    ),
-                  ],
-                ),
-                Divider(),
-                Text(
-                  'Food Orders',
-                  style: TextStyles.actionTitleBlack,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Feather.shopping_bag,
-                    color: AppColors.blackColor,
                   ),
-                  title: Text(
-                    'Your Orders',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text(
-                    'Send Feedback',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-                ListTile(
-                  title: Text(
-                    'Report a Safety Emergency',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-                ListTile(
-                  title: Text(
-                    'Rate us on the Play Store',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-                ListTile(
-                  title: Text(
-                    'About',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-                TextButton(onPressed: () async {
-
-                  await Backendless.userService.logout().then((response) {
-                    // user has been logged out.
-                   // ListenOrderModel().deleteListener();
-                    User().isLoggedIn = false;
-                    setState(() {
-
-                    });
-                  });
-
-                  //log out procedures
-
-                }, child:  ListTile(
-                  title: Text(
-                    'Log Out',
-                    style: TextStyles.highlighterTwo,
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),)
-
-              ],
-            ),
-          ),
-        ),
-      );
+                ));
     }
   }
 }

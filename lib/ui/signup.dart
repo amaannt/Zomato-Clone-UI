@@ -317,18 +317,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
          isSuccess = await User().userRegistration(fname.text, Sname.text, email.text, phoneNo.text, pass1.text);
          if(isSuccess){
            var thisUser = await Backendless.userService.currentUser();
-            try{
-           print("User with email:" + thisUser.email + " registered with ID:" + thisUser.getProperty("objectId"));}catch(e){}
-            User().id = thisUser.getProperty("objectId");
-            User().fname = fname.text;
-            User().lastName = Sname.text;
-            User().email= email.text;
-            User().phone = phoneNo.text;
-            User().wordPass = pass1.text;
-            User().displayName = fname.text;
-            User().isLoggedIn = true;
-            User().accountType = "BACKENDLESS";
-            User().address = "[]";
+           ///apply information to Application data as a new user
+            User().applyUserDetailLocal(thisUser, true, "");
+           //not sure whether saving the password is necessaryto the application
+            //User().wordPass = pass1.text;
+
             showAlertDialog(context, "Registration Successful!");
             Navigator.of(context).popAndPushNamed(HOME);
             setState(() {

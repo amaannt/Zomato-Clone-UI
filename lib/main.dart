@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zomatoui/Model/ListenerModel.dart';
 import 'package:zomatoui/ui/home.dart';
+import 'package:zomatoui/ui/profile/fifth.dart';
 import 'package:zomatoui/ui/signin.dart';
 import 'package:zomatoui/ui/signup.dart';
 import 'package:zomatoui/ui/splashscreen.dart';
@@ -90,7 +91,7 @@ class MyApp extends StatelessWidget {
           SIGN_IN: (BuildContext context) =>  SignInPage(),
           SIGN_UP: (BuildContext context) =>  SignUpScreen(),
           HOME: (BuildContext context) => HomePage(),
-
+          PROFILE: (BuildContext context) => ProfilePage(),
 
 
         },

@@ -222,11 +222,13 @@ class _SignInScreenState extends State<SignInScreen> {
             emailController.text.toLowerCase(), passwordController.text, true)
         .then((user) {
       Backendless.userService.isValidLogin().then((response) async {
+
         print("Is login valid? - $response");
         if (response == true) {
 
           try{
-            var thisUser = await Backendless.userService.currentUser();
+            var thisUser = user;
+            User().bkU = user;
             print("User with email:" + thisUser.email + " logged in with ID:" + thisUser.getProperty("objectId"));
             User().id = thisUser.getProperty("objectId");
             User().isLoggedIn = true;
