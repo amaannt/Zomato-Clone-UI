@@ -79,14 +79,14 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
         ));
   }
 
-   test() {
-    int x= 0;
-    /*while(StorageUtil.getString("ActiveOrder_" + x.toString()) != null &&StorageUtil.getString("ActiveOrder_" + x.toString()) != ""){
+   test() async{
+     Map person = {"name": "Joe", "age": 25};
+    await Backendless.data.of("Person").save(person).then((savedContact) {
+       savedContact["title"] = "Most favorite";
+       savedContact["phone"] = "666-666-666";
+       
+     });
 
-        print(StorageUtil.getString("ActiveOrderStatus_3"));
-        x++;
-      }*/
-     print(StorageUtil.getKeyPrefs());
     }
 
 
@@ -102,7 +102,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
-                    //test();
+                    test();
                   },
                   child: Container(child: Text("Save API MONEEEYYYSSSSS")),
                 ),

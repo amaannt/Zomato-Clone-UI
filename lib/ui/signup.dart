@@ -8,8 +8,6 @@ import 'package:zomatoui/widgets/customappbar.dart';
 import 'package:zomatoui/widgets/responsive_ui.dart';
 import 'package:zomatoui/widgets/textformfield.dart';
 
-
-
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -22,8 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   double _pixelRatio;
   bool _large;
   bool _medium;
-  TextEditingController fname,Sname,email, phoneNo, pass1, pass2;
-
+  TextEditingController fname, Sname, email, phoneNo, pass1, pass2;
 
   String statusMessage = "";
 
@@ -38,14 +35,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     pass2 = new TextEditingController();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
-    _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+    _large = ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
 
     return Material(
       child: Scaffold(
@@ -56,12 +53,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Opacity(opacity: 0.88,child: CustomAppBar()),
+                Opacity(opacity: 0.88, child: CustomAppBar()),
                 clipShape(),
                 form(),
                 acceptTermsTextRow(),
-                Container(child: Text(statusMessage, style: TextStyle(color: Colors.red)),),
-                SizedBox(height: _height/35,),
+                Container(
+                  child:
+                      Text(statusMessage, style: TextStyle(color: Colors.red)),
+                ),
+                SizedBox(
+                  height: _height / 35,
+                ),
                 button(),
                 infoTextRow(),
                 socialIconsRow(),
@@ -82,7 +84,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
-              height: _large? _height/8 : (_medium? _height/7 : _height/6.5),
+              height: _large
+                  ? _height / 8
+                  : (_medium ? _height / 7 : _height / 6.5),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.orange[200], Colors.pinkAccent],
@@ -96,7 +100,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: ClipPath(
             clipper: CustomShapeClipper2(),
             child: Container(
-              height: _large? _height/12 : (_medium? _height/11 : _height/10),
+              height: _large
+                  ? _height / 12
+                  : (_medium ? _height / 11 : _height / 10),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.orange[200], Colors.pinkAccent],
@@ -120,11 +126,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             shape: BoxShape.circle,
           ),
           child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 print('Adding photo');
               },
-
-              child: Icon(Icons.add_a_photo, size: _large? 40: (_medium? 33: 31),color: Colors.orange[200],)),
+              child: Icon(
+                Icons.add_a_photo,
+                size: _large ? 40 : (_medium ? 33 : 31),
+                color: Colors.orange[200],
+              )),
         ),
 //        Positioned(
 //          top: _height/8,
@@ -147,6 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ],
     );
   }
+
   ///Validation checks
   bool isFieldsChecked = false;
   bool isGoodEmailFormat = false;
@@ -154,51 +164,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPhoneNumberCorrectFormat = false;
 
   bool proceedRegistration = false;
-  Widget statusCheckMessage(){
-    if( fname.text.isNotEmpty &&
-        Sname.text != "" && Sname.text != null &&
-        email.text != "" && email.text != null &&
-        phoneNo.text != "" && phoneNo.text != null &&
-        pass1.text != "" && pass1.text != null &&
+  Widget statusCheckMessage() {
+    if (fname.text.isNotEmpty &&
+        Sname.text != "" &&
+        Sname.text != null &&
+        email.text != "" &&
+        email.text != null &&
+        phoneNo.text != "" &&
+        phoneNo.text != null &&
+        pass1.text != "" &&
+        pass1.text != null &&
         pass2.text.isNotEmpty &&
-        checkBoxValue){
+        checkBoxValue) {
       isFieldsChecked = true;
     }
-    if(!isFieldsChecked){
+    if (!isFieldsChecked) {
       //return Container(child: Text("Please Complete All Fields.", style: TextStyle(color: Colors.red),),);
       statusMessage = "Please Complete All Fields.";
-      setState(() {
-
-      });
+      setState(() {});
     }
-    if(pass1.text == pass2.text){
+    if (pass1.text == pass2.text) {
       isBothPasswordSame = true;
     }
 
-    if(!isBothPasswordSame){
-     // return Container(child: Text("Passwords do not match.", style: TextStyle(color: Colors.red),),);
+    if (!isBothPasswordSame) {
+      // return Container(child: Text("Passwords do not match.", style: TextStyle(color: Colors.red),),);
       statusMessage = "Passwords do not match.";
-      setState(() {
-
-      });
+      setState(() {});
     }
-    if(isFieldsChecked && isBothPasswordSame ){
+    if (isFieldsChecked && isBothPasswordSame) {
       proceedRegistration = true;
     }
   }
+
   Widget form() {
     return Container(
       margin: EdgeInsets.only(
-          left:_width/ 12.0,
-          right: _width / 12.0,
-          top: _height / 20.0),
+          left: _width / 12.0, right: _width / 12.0, top: _height / 20.0),
       child: Form(
         child: Column(
           children: <Widget>[
             firstNameTextFormField(),
             SizedBox(height: _height / 60.0),
             lastNameTextFormField(),
-            SizedBox(height: _height/ 60.0),
+            SizedBox(height: _height / 60.0),
             emailTextFormField(),
             SizedBox(height: _height / 60.0),
             phoneTextFormField(),
@@ -250,7 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget passwordTextFormField(String Hint) {
     return CustomTextField(
-      textEditingController: Hint=="Password"?pass1:pass2,
+      textEditingController: Hint == "Password" ? pass1 : pass2,
       keyboardType: TextInputType.text,
       obscureText: true,
       icon: Icons.lock,
@@ -274,18 +283,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
               }),
           Text(
             "I accept all terms and conditions",
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: _large? 12: (_medium? 11: 10)),
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: _large ? 12 : (_medium ? 11 : 10)),
           ),
         ],
       ),
     );
   }
+
   showAlertDialog(BuildContext context, String textString) {
     // set up the button
     Widget okButton = FlatButton(
       child: Text("Return to Home"),
       onPressed: () {
         Navigator.pop(context);
+        Navigator.of(context).popAndPushNamed(HOME);
       },
     );
 
@@ -305,41 +318,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
     );
   }
+
   Widget button() {
     return RaisedButton(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      onPressed: () async{
+      onPressed: () async {
         print("Routing to your account");
         statusCheckMessage();
-        bool isSuccess;
-        if(proceedRegistration){
-         isSuccess = await User().userRegistration(fname.text, Sname.text, email.text, phoneNo.text, pass1.text);
-         if(isSuccess){
-           var thisUser = await Backendless.userService.currentUser();
-           ///apply information to Application data as a new user
-            User().applyUserDetailLocal(thisUser, true, "");
-           //not sure whether saving the password is necessaryto the application
+        bool isSuccess = false;
+        if (proceedRegistration) {
+          print("Registering user...");
+          isSuccess = await User().userRegistration(
+              fname.text, Sname.text, email.text, phoneNo.text, pass1.text);
+
+          if (isSuccess) {
+            //BackendlessUser thisUser =await Backendless.userService.currentUser();
+
+            ///apply information to Application data as a new user
+            //User().applyUserDetailLocal(thisUser, isNewUser, Address)
+            //not sure whether saving the password is necessaryto the application
             //User().wordPass = pass1.text;
-
-            showAlertDialog(context, "Registration Successful!");
-            Navigator.of(context).popAndPushNamed(HOME);
-            setState(() {
-             // ListenOrderModel().createListen(User().id);
+            await Backendless.userService.login(User().email, pass1.text).then((user) {
+              // user has been logged in
+              print("Logged in after registration");
+              User().setUserDataLocal(user);
             });
+            await showAlertDialog(context, "Registration Successful!");
 
-
-         }
+            setState(() {
+              // ListenOrderModel().createListen(User().id);
+            });
+          }
         }
-
-
       },
       textColor: Colors.white,
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
 //        height: _height / 20,
-        width:_large? _width/4 : (_medium? _width/3.75: _width/3.5),
+        width: _large ? _width / 4 : (_medium ? _width / 3.75 : _width / 3.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           gradient: LinearGradient(
@@ -347,7 +365,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN UP', style: TextStyle(fontSize: _large? 14: (_medium? 12: 10)),),
+        child: Text(
+          'SIGN UP',
+          style: TextStyle(fontSize: _large ? 14 : (_medium ? 12 : 10)),
+        ),
       ),
     );
   }
@@ -360,7 +381,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: <Widget>[
           Text(
             "Or create using social media",
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: _large? 12: (_medium? 11: 10)),
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: _large ? 12 : (_medium ? 11 : 10)),
           ),
         ],
       ),
@@ -375,21 +398,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: <Widget>[
           CircleAvatar(
             radius: 15,
-            backgroundImage: AssetImage("assets/images/signupimages/googlelogo.png"),
+            backgroundImage:
+                AssetImage("assets/images/signupimages/googlelogo.png"),
           ),
           SizedBox(
             width: 20,
           ),
           CircleAvatar(
             radius: 15,
-            backgroundImage: AssetImage("assets/images/signupimages/fblogo.jpg"),
+            backgroundImage:
+                AssetImage("assets/images/signupimages/fblogo.jpg"),
           ),
           SizedBox(
             width: 20,
           ),
           CircleAvatar(
             radius: 15,
-            backgroundImage: AssetImage("assets/images/signupimages/twitterlogo.jpg"),
+            backgroundImage:
+                AssetImage("assets/images/signupimages/twitterlogo.jpg"),
           ),
         ],
       ),
@@ -417,7 +443,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Text(
               "Sign in",
               style: TextStyle(
-                  fontWeight: FontWeight.w800, color: Colors.orange[200], fontSize: 19),
+                  fontWeight: FontWeight.w800,
+                  color: Colors.orange[200],
+                  fontSize: 19),
             ),
           )
         ],

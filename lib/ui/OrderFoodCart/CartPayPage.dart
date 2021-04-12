@@ -236,7 +236,7 @@ class _FoodCartState extends State<FoodCart> {
           StorageUtil.putString(
               "ActiveOrderID_" + orderIndexInStorage.toString(),
               StorageUtil.getString("TempOrderID"));
-          print("The order ID that is svaefdedededede " +
+          print("The order ID that is saved " +
               StorageUtil.getString(
                   "ActiveOrderID_" + orderIndexInStorage.toString()));
           StorageUtil.deleteKey("TempOrderID");

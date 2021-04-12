@@ -229,7 +229,7 @@ class _SignInScreenState extends State<SignInScreen> {
           try{
             var thisUser = user;
             User().bkU = user;
-            print("User with email:" + thisUser.email + " logged in with ID:" + thisUser.getProperty("objectId"));
+            //print("User with email:" + thisUser.email + " logged in with ID:" + thisUser.getProperty("objectId"));
             User().id = thisUser.getProperty("objectId");
             User().isLoggedIn = true;
             User().fname = thisUser.getProperty("First_Name");
@@ -241,6 +241,7 @@ class _SignInScreenState extends State<SignInScreen> {
             User().isLoggedIn = true;
             User().accountType = "BACKENDLESS";
             User().address = thisUser.getProperty("AddressList");
+            User().setUserDataLocal(user);
             Navigator.pop(context);
             try {
               Navigator.popAndPushNamed(context, HOME);
@@ -344,7 +345,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pushNamed(SIGN_UP);
+              Navigator.of(context).popAndPushNamed(SIGN_UP);
               print("Routing to Sign up screen");
             },
             child: Text(
