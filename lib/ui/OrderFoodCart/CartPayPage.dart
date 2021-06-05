@@ -199,6 +199,8 @@ class _FoodCartState extends State<FoodCart> {
 
     userAddress = "Test Address 1";
     paymentType = "Visa/Mastercard";
+
+    //*********************** end of test data
     userID = User().id;
     userPhone_Number = User().phone;
     Map orderData = {
@@ -218,7 +220,7 @@ class _FoodCartState extends State<FoodCart> {
         .then((updatedOrder) {
       print(
           "Order Object has been updated in the database - ${updatedOrder['objectId']}");
-
+      ///Get the order ID first
       StorageUtil.putString("TempOrderID", updatedOrder["objectId"]);
     });
 
@@ -233,12 +235,14 @@ class _FoodCartState extends State<FoodCart> {
                   "ActiveOrder_" + orderIndexInStorage.toString()) ==
               "") {
         try {
+          ///Add the Order ID into the active order storage
           StorageUtil.putString(
               "ActiveOrderID_" + orderIndexInStorage.toString(),
               StorageUtil.getString("TempOrderID"));
           print("The order ID that is saved " +
               StorageUtil.getString(
                   "ActiveOrderID_" + orderIndexInStorage.toString()));
+          ///Delete the order key that was saved previously
           StorageUtil.deleteKey("TempOrderID");
           StorageUtil.putString(
               "ActiveOrderStatus_" + orderIndexInStorage.toString(),
@@ -249,6 +253,8 @@ class _FoodCartState extends State<FoodCart> {
           StorageUtil.putString(
               "ActiveOrderAddress_" + orderIndexInStorage.toString(),
               userAddress);
+
+          ///Save order date into he active order
           var now = new DateTime.now();
           var formatter = new DateFormat('yyyy-MM-dd');
           String formattedDate = formatter.format(now);

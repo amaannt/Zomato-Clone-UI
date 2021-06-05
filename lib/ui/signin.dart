@@ -2,6 +2,7 @@ import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:zomatoui/Model/ListenerModel.dart';
 import 'package:zomatoui/Model/User.dart';
+import 'package:zomatoui/Utils/StorageUtil.dart';
 import 'package:zomatoui/constants/constants.dart';
 import 'package:zomatoui/ui/home.dart';
 import 'package:zomatoui/widgets/custom_shape.dart';
@@ -247,7 +248,7 @@ class _SignInScreenState extends State<SignInScreen> {
               Navigator.popAndPushNamed(context, HOME);
               setState(() {
                // ListenOrderModel().createListen(User().id);
-
+                ///startUserOrderListener();
               });
             }catch(e){
               Navigator.pushNamed(context, HOME);
@@ -260,6 +261,16 @@ class _SignInScreenState extends State<SignInScreen> {
         /**/
       });
     });
+  }
+
+  void startUserOrderListener(){
+
+    ///Start the listening service for orders
+
+
+      StorageUtil.putBool("OrderListenerActive", true);
+      ListenOrderModel().createListen();
+
   }
   void createListenuserdata(String userID) {
     bool isChanged = false;

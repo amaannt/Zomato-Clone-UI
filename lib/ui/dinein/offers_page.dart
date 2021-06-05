@@ -3,12 +3,10 @@ import 'dart:convert';
 import 'package:backendless_sdk/backendless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:zomatoui/Utils/StorageUtil.dart';
+
 import 'package:zomatoui/constants/colors.dart';
 import 'package:zomatoui/ui/OrderFoodCart/CartPayPage.dart';
-import 'package:zomatoui/ui/dinein/dining.dart';
-import 'package:zomatoui/ui/dinein/nightlife.dart';
+
 import 'package:zomatoui/constants/textstyles.dart';
 
 
@@ -45,7 +43,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    //TabAnimcontroller.dispose();
+    TabAnimcontroller.dispose();
   }
 
   appBarBuilder() {
@@ -57,7 +55,7 @@ class _OfferPageState extends State<OfferPage> with TickerProviderStateMixin {
           title: Row(
             children: [
               Text(
-                "Pali Baba",
+                "Delivery App",
                 style: TextStyle(color: Colors.black),
               ),
               Spacer(),

@@ -47,27 +47,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _pageController = PageController();
-    ListenOrderModel ls = new ListenOrderModel();
+
 
     ///Start the listening service for orders
     if (User().isLoggedIn) {
       if (StorageUtil.getBool("OrderListenerActive")) {
-        try{ls.deleteListener();}
+        try{ListenOrderModel().deleteListener();}
         catch(e){}
       }
       StorageUtil.putBool("OrderListenerActive", true);
-      ls.createListen(User().id);
+      ListenOrderModel().createListen();
     } else {
       try {
-        ls.deleteListener();
+        ListenOrderModel().deleteListener();
         StorageUtil.putBool("OrderListenerActive", false);
       } catch (_) {}
     }
   }
 
-  _startListenerUser() {
-    ListenOrderModel().createListen(User().id);
-  }
+
 
 
   deleteUpdateListeners() {

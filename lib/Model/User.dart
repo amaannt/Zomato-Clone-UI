@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:zomatoui/Utils/LanguageController.dart';
 import 'package:zomatoui/Utils/StorageUtil.dart';
 
+import 'ListenerModel.dart';
+
 class User {
   String id;
   String email;
@@ -135,7 +137,14 @@ class User {
       await Backendless.userService.logout().then((response) {
         // user has been logged out.
         // ListenOrderModel().deleteListener();
+        ///Change user Status
         isLoggedIn = false;
+        ///Stop Listeners for Orders
+        if (StorageUtil.getBool("OrderListenerActive")) {
+          try{ListenOrderModel().deleteListener();}
+          catch(e){}
+        }
+        ///Remove User Details From Storage
         StorageUtil.putString("userStoredKeys", "");
         StorageUtil.putString("userStoredValues", "");
       });
@@ -287,13 +296,13 @@ class User {
     List<dynamic> values =convertToList("userStoredValues");
     ///Change BackendlessUser data to a map
     Map<String, dynamic> mapKV = new Map.fromIterables(keys, values);
-    print(mapKV);
+    //print(mapKV);
     ///Converts map to BackendlessUser Properties
     Map<String, dynamic> userKV = {"properties": mapKV};
-    print(userKV);
+    //print(userKV);
     ///Converts BkU JSON properties to backendlessUser object
     BackendlessUser user = BackendlessUser.fromJson(userKV);
-    print("\n $user");
+    //print("\n $user");
     ///Apply this information to local Application
     applyUserDetailLocal(user, false,"");
   }

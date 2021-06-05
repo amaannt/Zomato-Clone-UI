@@ -387,7 +387,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
           title: Row(
             children: [
               Text(
-                "Pali Baba",
+                "Delivery App",
                 style: TextStyle(color: Colors.black),
               ),
               Spacer(),
@@ -434,7 +434,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       } else {
         setItemContentCache();
         return Scaffold(
-
             ///APPBAR SUBJECT TO CHANGE
             ///
             appBar: appbarWidget,

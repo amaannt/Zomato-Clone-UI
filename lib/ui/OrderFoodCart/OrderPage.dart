@@ -51,7 +51,8 @@ class _OrderPageTabState extends State<OrderPageTab> {
     print("Order page orders loaded");
   }
 
-  handleUpdates() {
+  handleUpdates() {print("Found order and changed variables " + updateStatus);
+
     if (updateStatus == "Delivered") {
       // run through each Active order
       for (int orderIndex = 0; orderIndex < sizeOfActiveList; orderIndex++) {
@@ -80,7 +81,7 @@ class _OrderPageTabState extends State<OrderPageTab> {
         ///Find the matching order
         if (updateOrderID ==
             StorageUtil.getString("ActiveOrderID_" + orderIndex.toString())) {
-          //print("Found order and changed variables");
+
 
           ///change storage content
           StorageUtil.putString(
@@ -482,15 +483,21 @@ class _OrderPageTabState extends State<OrderPageTab> {
   getPreviousOrderList() {
     try {
       return sizeOfHistoryList > 0
-          ? ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: sizeOfHistoryList,
-              itemBuilder: (BuildContext context, int index) {
-                return makeCard(
-                    previousOrders[(sizeOfHistoryList - 1) - index]);
-              },
-            )
+          ? Column(
+            children: [
+              ListView.builder(
+                  //scrollDirection: Axis.vertical,
+        physics: new NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: sizeOfHistoryList,
+                  itemBuilder: (BuildContext context, int index) {
+                    return makeCard(
+                        previousOrders[(sizeOfHistoryList - 1) - index]);
+                  },
+                ),
+              SizedBox(height: 20,),
+            ],
+          )
           : Column(
               children: [
                 Container(
@@ -528,21 +535,21 @@ class _OrderPageTabState extends State<OrderPageTab> {
   @override
   Widget build(BuildContext context) {
     ///Listens to change notifier with the backendless listener API
-    if(User().isLoggedIn) {
+
       Provider.of<ListenOrderModel>(context).notifyChanges();
 
       try {
         ///Every time there is a change, the messagePrint variable receives the data from the change and applies it to the two variables
         final messagePrint = Provider.of<ListenOrderModel>(context);
+
         this.updateStatus = messagePrint.updateStatus;
         this.updateOrderID = messagePrint.updateOrderID;
-
         ///This function adds the variables to the current widget and refreshes them
         handleUpdates();
       } catch (e) {
         return LinearProgressIndicator();
       }
-    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black26,
